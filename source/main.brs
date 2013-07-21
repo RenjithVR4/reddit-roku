@@ -31,26 +31,28 @@ Function Main()
 		list = CreateObject("roArray", 10, true)
 		title = subReddits[j]
 		api_url = "http://www.reddit.com" + title + ".json"
+		
 		print api_url
 		json = fetch_JSON(api_url)
 		print json
 		for each post in json.data.children
+				 ups = post.data.ups.tostr()
+				 downs = post.data.downs.tostr()
 				 o = CreateObject("roAssociativeArray")
 				 o.ContentType = "episode"
 				 o.Title = post.data.title
 				 o.SDPosterUrl = post.data.thumbnail
 				 o.HDPosterUrl = post.data.thumbnail
-				 o.ShortDescriptionLine1 = "[ShortDescriptionLine1]"
-				 o.ShortDescriptionLine2 = "[ShortDescriptionLine2]"
-				 o.Description = ""
-				 o.Description = "[Description] "
+				 o.ShortDescriptionLine1 = "Upvotes: " + ups + " - Downvotes: " + downs
+				 o.ShortDescriptionLine2 = post.data.url
+				 o.Description = "Upvotes: " + ups + " - Downvotes: " + downs + "     " + post.data.url
 				 o.Rating = "NR"
-				 o.StarRating = "75"
+				 o.StarRating = "100"
 				 o.ReleaseDate = "[<mm/dd/yyyy]"
 				 o.Length = 5400
 				 o.Actors = []
-				 o.Actors.Push("[Actor1]")
-				 o.Actors.Push("[Actor2]")
+				 o.Actors.Push("Posted by: "+ post.data.author)
+				 o.Actors.Push("domain: " + post.data.domain)
 				 o.Actors.Push("[Actor3]")
 				 o.Director = "[Director]"
 				 list.Push(o)
@@ -87,5 +89,6 @@ Function fetch_JSON(url as string) as Object
 
     return json
 End Function
+
 
 
