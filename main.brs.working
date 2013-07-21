@@ -1,0 +1,73 @@
+Function Main()
+     port = CreateObject("roMessagePort")
+    grid = CreateObject("roGridScreen")
+    grid.SetMessagePort(port) 
+	' grid.SetDisplayMode("zoom-to-fill")
+	' grid.SetDisplayMode("photo-fit")
+	grid.SetDisplayMode("scale-to-fit")
+    rowTitles = CreateObject("roArray", 10, true)
+    for j = 0 to 10
+        rowTitles.Push("[Row Title " + j.toStr() + " ] ")
+    end for
+    grid.SetupLists(rowTitles.Count())
+    grid.SetListNames(rowTitles) 
+    for j = 0 to 10
+		list = CreateObject("roArray", 10, true)
+		api_url = "http://www.reddit.com/r/funny.json"
+		json = fetch_JSON(api_url)
+		print json
+		for each post in json.data.children
+				 o = CreateObject("roAssociativeArray")
+				 o.ContentType = "episode"
+				 o.Title = post.data.title
+				 o.SDPosterUrl = post.data.thumbnail
+				 o.HDPosterUrl = post.data.thumbnail
+				 o.ShortDescriptionLine1 = "[ShortDescriptionLine1]"
+				 o.ShortDescriptionLine2 = "[ShortDescriptionLine2]"
+				 o.Description = ""
+				 o.Description = "[Description] "
+				 o.Rating = "NR"
+				 o.StarRating = "75"
+				 o.ReleaseDate = "[<mm/dd/yyyy]"
+				 o.Length = 5400
+				 o.Actors = []
+				 o.Actors.Push("[Actor1]")
+				 o.Actors.Push("[Actor2]")
+				 o.Actors.Push("[Actor3]")
+				 o.Director = "[Director]"
+				 list.Push(o)
+		
+		end for
+         grid.SetContentList(j, list) 
+     end for 
+     grid.Show() 
+    while true
+         msg = wait(0, port)
+         if type(msg) = "roGridScreenEvent" then
+             if msg.isScreenClosed() then
+                 return -1
+             elseif msg.isListItemFocused()
+                 print "Focused msg: ";msg.GetMessage();"row: ";msg.GetIndex();
+                 print " col: ";msg.GetData()
+             elseif msg.isListItemSelected()
+                 print "Selected msg: ";msg.GetMessage();"row: ";msg.GetIndex();
+                 print " col: ";msg.GetData()
+             endif
+         endif
+     end while
+End Function
+
+
+Function fetch_JSON(url as string) as Object
+
+    print "fetching new JSON"
+
+    xfer=createobject("roURLTransfer")
+    xfer.seturl(url)
+    data=xfer.gettostring()
+    json = ParseJSON(data)
+
+    return json
+End Function
+
+
