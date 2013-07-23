@@ -1,10 +1,15 @@
 Function Main()
-     port = CreateObject("roMessagePort")
+
+
+	initTheme()
+
+	port=CreateObject("roMessagePort")
     grid = CreateObject("roGridScreen")
-    grid.SetMessagePort(port) 
-	' grid.SetDisplayMode("zoom-to-fill")
-	' grid.SetDisplayMode("photo-fit")
-	grid.SetDisplayMode("scale-to-fit")
+    grid.SetMessagePort(port)
+    grid.SetDisplayMode("scale-to-fit")
+    grid.SetGridStyle("Flat-Square")
+
+	
     subReddits = CreateObject("roArray", 30, true)
     subReddits.Push("/r/funny")
 	subReddits.Push("/r/pics")
@@ -27,6 +32,7 @@ Function Main()
 
     grid.SetupLists(subReddits.Count())
     grid.SetListNames(subReddits) 
+	
     for j = 0 to subReddits.Count() - 1
 		list = CreateObject("roArray", 10, true)
 		title = subReddits[j]
@@ -36,11 +42,13 @@ Function Main()
 		json = fetch_JSON(api_url)
 		print json
 		for each post in json.data.children
+				 ' date = 
 				 ups = post.data.ups.tostr()
 				 downs = post.data.downs.tostr()
 				 o = CreateObject("roAssociativeArray")
 				 o.ContentType = "episode"
 				 o.Title = post.data.title
+				 o.Url = post.data.url
 				 o.SDPosterUrl = post.data.thumbnail
 				 o.HDPosterUrl = post.data.thumbnail
 				 o.ShortDescriptionLine1 = "Upvotes: " + ups + " - Downvotes: " + downs
@@ -91,4 +99,66 @@ Function fetch_JSON(url as string) as Object
 End Function
 
 
+
+Sub initTheme()
+    app = CreateObject("roAppManager")
+    app.SetTheme(CreateDefaultTheme())
+End Sub
+'******************************************************
+'** @return The default application theme.
+'** Screens can make slight adjustments to the default
+'** theme by getting it from here and then overriding
+'** individual theme attributes.
+'******************************************************
+Function CreateDefaultTheme() as Object
+    theme = CreateObject("roAssociativeArray")
+
+    theme.ThemeType = "generic-dark"
+
+    ' All these are greyscales
+    theme.GridScreenBackgroundColor = "#363636"
+    theme.GridScreenMessageColor    = "#808080"
+    theme.GridScreenRetrievingColor = "#CCCCCC"
+    theme.GridScreenListNameColor   = "#FFFFFF"
+
+    ' Color values work here
+    theme.GridScreenDescriptionTitleColor    = "#001090"
+    theme.GridScreenDescriptionDateColor     = "#FF005B"
+    theme.GridScreenDescriptionRuntimeColor  = "#5B005B"
+    theme.GridScreenDescriptionSynopsisColor = "#606000"
+    
+    'used in the Grid Screen
+    theme.CounterTextLeft           = "#FF0000"
+    theme.CounterSeparator          = "#00FF00"
+    theme.CounterTextRight          = "#0000FF"
+    
+    theme.GridScreenLogoHD          = "pkg:/images/Overhang_Test_HD.png"
+	' theme.GridScreenLogoHD          = "http://www.redditstatic.com/about/assets/reddit-logo-small.png"
+	
+
+    theme.GridScreenLogoOffsetHD_X  = "0"
+    theme.GridScreenLogoOffsetHD_Y  = "0"
+    theme.GridScreenOverhangHeightHD = "99"
+
+    theme.GridScreenLogoSD          = "pkg:/images/Overhang_Test_SD43.png"
+	' theme.GridScreenLogoSD          = "http://www.redditstatic.com/about/assets/reddit-logo-small.png"
+    theme.GridScreenOverhangHeightSD = "66"
+    theme.GridScreenLogoOffsetSD_X  = "0"
+    theme.GridScreenLogoOffsetSD_Y  = "0"
+    
+    ' to use your own focus ring artwork 
+    'theme.GridScreenFocusBorderSD        = "pkg:/images/GridCenter_Border_Movies_SD43.png"
+    'theme.GridScreenBorderOffsetSD  = "(-26,-25)"
+    'theme.GridScreenFocusBorderHD        = "pkg:/images/GridCenter_Border_Movies_HD.png"
+    'theme.GridScreenBorderOffsetHD  = "(-28,-20)"
+    
+    ' to use your own description background artwork
+    'theme.GridScreenDescriptionImageSD  = "pkg:/images/Grid_Description_Background_SD43.png"
+    'theme.GridScreenDescriptionOffsetSD = "(125,170)"
+    'theme.GridScreenDescriptionImageHD  = "pkg:/images/Grid_Description_Background_HD.png"
+    'theme.GridScreenDescriptionOffsetHD = "(190,255)"
+    
+
+    return theme
+End Function
 
