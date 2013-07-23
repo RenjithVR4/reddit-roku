@@ -1,4 +1,14 @@
+Library "v30/bslCore.brs"
+
 Function Main()
+
+
+	' Pop up start of UI for some instant feedback while we load the icon data
+	poster=uitkPreShowPosterMenu()
+	if poster=invalid then
+		print "unexpected error in uitkPreShowPosterMenu"
+
+	end if
 
 
 	initTheme()
@@ -13,21 +23,21 @@ Function Main()
     subReddits = CreateObject("roArray", 30, true)
     subReddits.Push("/r/funny")
 	subReddits.Push("/r/pics")
-    subReddits.Push("/r/adviceanimals")
-    subReddits.Push("/r/aww")
-    subReddits.Push("/r/books")
-    subReddits.Push("/r/earthporn")
-    subReddits.Push("/r/explainlikeimfive")
-    subReddits.Push("/r/gaming")
-    subReddits.Push("/r/gifs")
-    subReddits.Push("/r/IAmA")
-    subReddits.Push("/r/movies")
-    subReddits.Push("/r/news")
-    subReddits.Push("/r/science")
-    subReddits.Push("/r/technology")
-    subReddits.Push("/r/television")
-    subReddits.Push("/r/todayilearned")
-    subReddits.Push("/r/worldnews")
+  '  subReddits.Push("/r/adviceanimals")
+   ' subReddits.Push("/r/aww")
+  '  subReddits.Push("/r/books")
+   ' subReddits.Push("/r/earthporn")
+  '  subReddits.Push("/r/explainlikeimfive")
+  '  subReddits.Push("/r/gaming")
+   ' subReddits.Push("/r/gifs")
+  '  subReddits.Push("/r/IAmA")
+   ' subReddits.Push("/r/movies")
+   ' subReddits.Push("/r/news")
+   ' subReddits.Push("/r/science")
+   ' subReddits.Push("/r/technology")
+   ' subReddits.Push("/r/television")
+   ' subReddits.Push("/r/todayilearned")
+   ' subReddits.Push("/r/worldnews")
     
 
     grid.SetupLists(subReddits.Count())
@@ -80,6 +90,7 @@ Function Main()
              elseif msg.isListItemSelected()
                  print "Selected msg: ";msg.GetMessage();"row: ";msg.GetIndex();
                  print " col: ";msg.GetData()
+				 showImg("http://www.dudelol.com/img/ahh-thats-better.jpeg")
              endif
          endif
      end while
@@ -131,20 +142,17 @@ Function CreateDefaultTheme() as Object
     theme.CounterTextLeft           = "#FF0000"
     theme.CounterSeparator          = "#00FF00"
     theme.CounterTextRight          = "#0000FF"
-    
-    theme.GridScreenLogoHD          = "pkg:/images/Overhang_Test_HD.png"
-	' theme.GridScreenLogoHD          = "http://www.redditstatic.com/about/assets/reddit-logo-small.png"
 	
+	theme.GridScreenLogoHD          = "pkg:/images/reddit-logo-hd.png"
+	
+    theme.GridScreenLogoOffsetHD_X  = "30"
+    theme.GridScreenLogoOffsetHD_Y  = "15"
+    theme.GridScreenOverhangHeightHD = "114"
 
-    theme.GridScreenLogoOffsetHD_X  = "0"
-    theme.GridScreenLogoOffsetHD_Y  = "0"
-    theme.GridScreenOverhangHeightHD = "99"
-
-    theme.GridScreenLogoSD          = "pkg:/images/Overhang_Test_SD43.png"
-	' theme.GridScreenLogoSD          = "http://www.redditstatic.com/about/assets/reddit-logo-small.png"
-    theme.GridScreenOverhangHeightSD = "66"
-    theme.GridScreenLogoOffsetSD_X  = "0"
-    theme.GridScreenLogoOffsetSD_Y  = "0"
+    theme.GridScreenLogoSD          = "pkg:/images/reddit-logo-sd.png"
+    theme.GridScreenOverhangHeightSD = "81"
+    theme.GridScreenLogoOffsetSD_X  = "30"
+    theme.GridScreenLogoOffsetSD_Y  = "15"
     
     ' to use your own focus ring artwork 
     'theme.GridScreenFocusBorderSD        = "pkg:/images/GridCenter_Border_Movies_SD43.png"
@@ -162,3 +170,24 @@ Function CreateDefaultTheme() as Object
     return theme
 End Function
 
+function createScreenDescription(topx, topy, width ,height, screenwidth, screenheight, par)
+    description1 = str(width)+"x"+str(height)
+    description2 = "No Sidebars"
+    if (topx)
+        description2 = "sidebar=" + str(topx)
+    endif
+    if (topy)
+        description2 = "letterbox=" + str(topy)
+    endif
+       
+    return {    ShortDescriptionLine1: description1,
+                ShortDescriptionLine2: description2,
+                drawwidth: width,
+                drawheight: height,
+                screenwidth: screenwidth,
+                screenheight: screenheight,
+                par: par,
+                drawtopx: topx,
+                drawtopy: topy,
+            }
+end function
