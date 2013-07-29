@@ -42,9 +42,10 @@ Function Main()
 
     grid.SetupLists(subReddits.Count())
     grid.SetListNames(subReddits) 
+	list = CreateObject("roArray", 30, true)
 	
     for j = 0 to subReddits.Count() - 1
-		list = CreateObject("roArray", 10, true)
+		list[j] = CreateObject("roArray", 10, true)
 		title = subReddits[j]
 		api_url = "http://www.reddit.com" + title + ".json"
 		
@@ -52,31 +53,38 @@ Function Main()
 		json = fetch_JSON(api_url)
 		print json
 		for each post in json.data.children
-				 ' date = 
-				 ups = post.data.ups.tostr()
-				 downs = post.data.downs.tostr()
-				 o = CreateObject("roAssociativeArray")
-				 o.ContentType = "episode"
-				 o.Title = post.data.title
-				 o.Url = post.data.url
-				 o.SDPosterUrl = post.data.thumbnail
-				 o.HDPosterUrl = post.data.thumbnail
-				 o.ShortDescriptionLine1 = "Upvotes: " + ups + " - Downvotes: " + downs
-				 o.ShortDescriptionLine2 = post.data.url
-				 o.Description = "Upvotes: " + ups + " - Downvotes: " + downs + "     " + post.data.url
-				 o.Rating = "NR"
-				 o.StarRating = "100"
-				 o.ReleaseDate = "[<mm/dd/yyyy]"
-				 o.Length = 5400
-				 o.Actors = []
-				 o.Actors.Push("Posted by: "+ post.data.author)
-				 o.Actors.Push("domain: " + post.data.domain)
-				 o.Actors.Push("[Actor3]")
-				 o.Director = "[Director]"
-				 list.Push(o)
+				
+				 url = fixImgur(post.data.url)
+				 if(isImg(url) = false OR isGallery(url) = false)
+				   print "Its not an img!"
+				   
+				 else
+					 ups = post.data.ups.tostr()
+					 downs = post.data.downs.tostr()
+					 o = CreateObject("roAssociativeArray")
+					 o.ContentType = "episode"
+					 o.Title = post.data.title
+					 o.Url = url
+					 o.SDPosterUrl = post.data.thumbnail
+					 o.HDPosterUrl = post.data.thumbnail
+					 o.ShortDescriptionLine1 = "Upvotes: " + ups + " - Downvotes: " + downs
+					 o.ShortDescriptionLine2 = post.data.url
+					 o.Description = "Upvotes: " + ups + " - Downvotes: " + downs + "     " + post.data.url
+					 o.Rating = "NR"
+					 o.StarRating = "100"
+					 o.ReleaseDate = "[<mm/dd/yyyy]"
+					 o.Length = 5400
+					 o.Actors = []
+					 o.Actors.Push("Posted by: "+ post.data.author)
+					 o.Actors.Push("domain: " + post.data.domain)
+					 o.Actors.Push("[Actor3]")
+					 o.Director = "[Director]"
+					 list[j].Push(o)
+				 
+				 endif
 		
 		end for
-         grid.SetContentList(j, list) 
+         grid.SetContentList(j, list[j]) 
      end for 
      grid.Show() 
     while true
@@ -90,13 +98,39 @@ Function Main()
              elseif msg.isListItemSelected()
                  print "Selected msg: ";msg.GetMessage();"row: ";msg.GetIndex();
                  print " col: ";msg.GetData()
-				 'showImg("http://dudelol.com/img/took-way-to-long-for-me-to-notice.jpeg")
-				 showImg("http://i.imgur.com/LP8ck2f.jpg")
+				 row = msg.GetIndex()
+				 col = msg.GetData()
+				 'print list[msg.GetData()].url
+				 showImg(list[msg.GetIndex()][msg.GetData()].url)
+				' showImg("http://dudelol.com/img/took-way-to-long-for-me-to-notice.jpeg")
+				'  showImg("http://www.dudelol.com/img/doesnt-matter-had-sex39666.jpeg")
              endif
          endif
      end while
 End Function
 
+Function fixImgur(url as string) as String
+if right(url, 3) <> "jpg" AND right(url, 3) <> "png" AND right(url, 3) <> "gif" AND right(url, 4) <> "jpeg"  then
+url = url + ".jpg"
+endif
+return url
+End Function
+
+Function isImg(url as string) As Boolean
+	if right(url, 3) <> "jpg" AND right(url, 3) <> "png" AND right(url, 3) <> "gif" AND right(url, 4) <> "jpeg"  then
+		return false
+	else
+		return true
+	endif
+End Function
+
+Function isGallery(url as string) As Boolean
+	if Instr(1, url, "imgur.com/a/") > 0 then
+		return false
+	else
+		return true
+	endif
+End Function
 
 Function fetch_JSON(url as string) as Object
 

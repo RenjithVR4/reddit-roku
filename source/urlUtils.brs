@@ -176,6 +176,7 @@ REM ******************************************************
 Function http_get_to_file_with_timeout(filename as String, seconds as Integer) as Boolean
     timeout% = 1000 * seconds
 
+	print "Ben is awesome"
     print "http_get_to_file_with_timeout"
     
     str = ""
