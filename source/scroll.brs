@@ -28,11 +28,19 @@ Function showImg(url)
         stop
     endif
 	
-	print bigbm.GetWidth()
-	print screen.getwidth()
+	ScreenWidth = screen.getwidth()
+	ScreenHeight = screen.getheight()
+	
+	if (bigbm.GetWidth() < screen.getwidth())
+		ScreenWidth = bigbm.GetWidth()
+	endif
+	if (bigbm.GetHeight() < screen.getwidth())
+		ScreenHeight = bigbm.GetHeight()
+	endif
 	
     ' backgroundRegion=CreateObject("roRegion", bigbm, 0, 0, screen.getwidth(), screen.getheight())
-	 backgroundRegion=CreateObject("roRegion", bigbm, 0, 0, bigbm.GetWidth(), bigbm.GetHeight())
+	' backgroundRegion=CreateObject("roRegion", bigbm, 0, 0, bigbm.GetWidth(), bigbm.GetHeight())
+	 backgroundRegion=CreateObject("roRegion", bigbm, 0, 0, ScreenWidth, ScreenHeight)
 	 
 	
     if backgroundRegion = invalid
