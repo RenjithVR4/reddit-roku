@@ -20,18 +20,16 @@ Function showImg(url)
 	' http = NewHttp("http://cutecaptions.com/img/waste-of-money.png")
 	 http = NewHttp(url)
 	' http = NewHttp("http://i.imgur.com/H7dF5MM.jpg")
-    http.GetToFileWithTimeout("tmp:/viewPost.png", 520)
+    http.GetToFileWithTimeout("tmp:/viewPost.png", 5020)
     bigbm=CreateObject("roBitmap", "tmp:/viewPost.png")
-		
-	
-	
-                
+		  
     if bigbm = invalid
         print "bigbm create failed"
         stop
     endif
 	
 	print bigbm.GetWidth()
+	print screen.getwidth()
 	
     ' backgroundRegion=CreateObject("roRegion", bigbm, 0, 0, screen.getwidth(), screen.getheight())
 	 backgroundRegion=CreateObject("roRegion", bigbm, 0, 0, bigbm.GetWidth(), bigbm.GetHeight())
