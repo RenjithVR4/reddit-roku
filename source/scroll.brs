@@ -1,3 +1,4 @@
+
 Function IsHD()
     di = CreateObject("roDeviceInfo")
     if di.GetDisplayType() = "HDTV" then return true
@@ -6,28 +7,36 @@ End Function
 
 Function showImg(url) 
 
+	'this needs to be declared somehow
+	screen = "null"
+	
     if IsHD()
         screen=CreateObject("roScreen", true, 854, 480)  'try this to see zoom
     else
         screen=CreateObject("roScreen", true)
     endif
 
-    if true
-        ' http = NewHttp2("http://rokudev.roku.com/rokudev/examples/scroll/VeryBigPng.png", "text/xml")
-	    ' http = NewHttp("http://cutecaptions.com/img/waste-of-money.png")
-	    http = NewHttp(url)
-        ' http.GetToFileWithTimeout("tmp:/viewPost.png", 120)
-        ' bigbm=CreateObject("roBitmap", "tmp:/viewPost.png")
+    ' http = NewHttp2("http://rokudev.roku.com/rokudev/examples/scroll/VeryBigPng.png", "text/xml")
+	' http = NewHttp("http://cutecaptions.com/img/waste-of-money.png")
+	 http = NewHttp(url)
+	' http = NewHttp("http://i.imgur.com/H7dF5MM.jpg")
+    http.GetToFileWithTimeout("tmp:/viewPost.png", 520)
+    bigbm=CreateObject("roBitmap", "tmp:/viewPost.png")
 		
-    else   ' generic version
-        bigbm=CreateObject("roBitmap", "pkg:/redditroku_assets/VeryBigPng.png")
-    end if
+	
+	
                 
     if bigbm = invalid
         print "bigbm create failed"
         stop
     endif
-    backgroundRegion=CreateObject("roRegion", bigbm, 0, 0, screen.getwidth(), screen.getheight())
+	
+	print bigbm.GetWidth()
+	
+    ' backgroundRegion=CreateObject("roRegion", bigbm, 0, 0, screen.getwidth(), screen.getheight())
+	 backgroundRegion=CreateObject("roRegion", bigbm, 0, 0, bigbm.GetWidth(), bigbm.GetHeight())
+	 
+	
     if backgroundRegion = invalid
         print "create region failed"
         stop

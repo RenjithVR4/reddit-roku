@@ -90,7 +90,7 @@ Function Main()
              elseif msg.isListItemSelected()
                  print "Selected msg: ";msg.GetMessage();"row: ";msg.GetIndex();
                  print " col: ";msg.GetData()
-				 showImg("http://www.dudelol.com/img/ahh-thats-better.jpeg")
+				 showImg("http://dudelol.com/img/took-way-to-long-for-me-to-notice.jpeg")
              endif
          endif
      end while
