@@ -64,6 +64,7 @@ Function Main()
 					 o = CreateObject("roAssociativeArray")
 					 o.ContentType = "episode"
 					 o.Title = post.data.title
+					 o.TextOverlayBody = post.data.title
 					 o.Url = url
 					 o.SDPosterUrl = post.data.thumbnail
 					 o.HDPosterUrl = post.data.thumbnail
@@ -79,6 +80,14 @@ Function Main()
 					 o.Actors.Push("domain: " + post.data.domain)
 					 o.Actors.Push("[Actor3]")
 					 o.Director = "[Director]"
+					 o.Font = "Large"
+					 o.TextAttrs = { 
+									Color:"#FFCCCCCC", 
+									Font:"Large", 
+									HAlign:"HCenter", 
+									VAlign:"VCenter", 
+									Direction:"LeftToRight" 
+									}
 					 list[j].Push(o)
 				 
 				 endif
