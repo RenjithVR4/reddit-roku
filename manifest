@@ -1,8 +1,8 @@
-title=Cute Captions Screensaver
-screensaver_title=Cute Captions
-subtitle=Captions of cute cats on your screen brought to you by CuteCaptions.com
-screensaver_title=Cute Captions Screensaver
-screensaver_private=0
+title=Reddit
+subtitle=Browse images of Reddit
+splash_screen_hd=pkg:/images/reddit-logo-hd.png
+splash_screen_sd=pkg:/images/reddit-logo-sd.png
+splash_color=#ffffff
 major_version=1
 minor_version=0
 build_version=00000

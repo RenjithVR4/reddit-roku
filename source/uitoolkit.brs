@@ -60,6 +60,17 @@ function uitkPreShowPosterMenu(breadA=invalid, breadB=invalid) As Object
 	return screen
 end function
 
+function loadingScreen() As Object
+	port=CreateObject("roMessagePort")
+	screen = CreateObject("roPosterScreen")
+	screen.SetMessagePort(port)
+
+	screen.SetListStyle("flat-category")
+	screen.Show()
+
+	return screen
+end function
+
 
 function uitkDoPosterMenu(posterdata, screen, onselect_callback=invalid) As Integer
 

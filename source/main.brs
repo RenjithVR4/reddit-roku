@@ -4,11 +4,12 @@ Function Main()
 
 
 	' Pop up start of UI for some instant feedback while we load the icon data
-	poster=uitkPreShowPosterMenu()
-	if poster=invalid then
-		print "unexpected error in uitkPreShowPosterMenu"
+	' poster=uitkPreShowPosterMenu()
+	' poster = loadingScreen()
+	'if poster=invalid then
+	'	print "unexpected error in uitkPreShowPosterMenu"
 
-	end if
+	'end if
 
 
 	initTheme()
@@ -185,30 +186,30 @@ End Sub
 Function CreateDefaultTheme() as Object
     theme = CreateObject("roAssociativeArray")
 
-    theme.ThemeType = "generic-dark"
+    theme.ThemeType = "generic-white"
 
     ' All these are greyscales
-    theme.GridScreenBackgroundColor = "#363636"
-    theme.GridScreenMessageColor    = "#808080"
-    theme.GridScreenRetrievingColor = "#CCCCCC"
-    theme.GridScreenListNameColor   = "#FFFFFF"
+    theme.GridScreenBackgroundColor = "#ffffff"
+    theme.GridScreenMessageColor    = "#000000"
+    theme.GridScreenRetrievingColor = "#000000"
+    theme.GridScreenListNameColor   = "#000000"
 
     ' Color values work here
-    theme.GridScreenDescriptionTitleColor    = "#001090"
+    theme.GridScreenDescriptionTitleColor    = "#000000"
     theme.GridScreenDescriptionDateColor     = "#FF005B"
     theme.GridScreenDescriptionRuntimeColor  = "#5B005B"
     theme.GridScreenDescriptionSynopsisColor = "#606000"
     
     'used in the Grid Screen
-    theme.CounterTextLeft           = "#FF0000"
-    theme.CounterSeparator          = "#00FF00"
-    theme.CounterTextRight          = "#0000FF"
+    theme.CounterTextLeft           = "#000000"
+    theme.CounterSeparator          = "#000000"
+    theme.CounterTextRight          = "#000000"
 	
 	theme.GridScreenLogoHD          = "pkg:/images/reddit-logo-hd.png"
 	
-    theme.GridScreenLogoOffsetHD_X  = "30"
-    theme.GridScreenLogoOffsetHD_Y  = "15"
-    theme.GridScreenOverhangHeightHD = "114"
+    theme.GridScreenLogoOffsetHD_X  = "35"
+    theme.GridScreenLogoOffsetHD_Y  = "20"
+    theme.GridScreenOverhangHeightHD = "121"
 
     theme.GridScreenLogoSD          = "pkg:/images/reddit-logo-sd.png"
     theme.GridScreenOverhangHeightSD = "81"
@@ -231,24 +232,3 @@ Function CreateDefaultTheme() as Object
     return theme
 End Function
 
-function createScreenDescription(topx, topy, width ,height, screenwidth, screenheight, par)
-    description1 = str(width)+"x"+str(height)
-    description2 = "No Sidebars"
-    if (topx)
-        description2 = "sidebar=" + str(topx)
-    endif
-    if (topy)
-        description2 = "letterbox=" + str(topy)
-    endif
-       
-    return {    ShortDescriptionLine1: description1,
-                ShortDescriptionLine2: description2,
-                drawwidth: width,
-                drawheight: height,
-                screenwidth: screenwidth,
-                screenheight: screenheight,
-                par: par,
-                drawtopx: topx,
-                drawtopy: topy,
-            }
-end function
