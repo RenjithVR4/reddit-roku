@@ -119,11 +119,11 @@ end function
 Sub showSlideShow(list,start, port)
     s = CreateObject("roSlideShow")
     s.SetMessagePort(port)
-	s.SetTextOverlayHoldTime(10000)
+	s.SetTextOverlayHoldTime(9000)
 	' s.SetTextOverlayIsVisible(true)
 	s.SetUnderscan(3) ' gives a padding around the image because TVs cut off the outer part of the image sometimes
 	' s.SetDisplayMode("photo-fit") 'I think default is best
-	's.SetPeriod(8) ' dont need this
+	s.SetPeriod(9) ' dont need this
 	
     's.SetContentList([{ Url: img }])
 	s.SetContentList(list)
