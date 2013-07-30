@@ -29,9 +29,9 @@ Function Main()
    ' subReddits.Push("/r/earthporn")
   '  subReddits.Push("/r/explainlikeimfive")
   '  subReddits.Push("/r/gaming")
-   ' subReddits.Push("/r/gifs")
+    subReddits.Push("/r/gifs")
   '  subReddits.Push("/r/IAmA")
-   ' subReddits.Push("/r/movies")
+   ' subReddits.Push("/r/treecomics")
    ' subReddits.Push("/r/news")
    ' subReddits.Push("/r/science")
    ' subReddits.Push("/r/technology")
@@ -55,7 +55,7 @@ Function Main()
 		for each post in json.data.children
 				
 				 url = fixImgur(post.data.url)
-				 if(isImg(url) = false OR isGallery(url) = false)
+				 if(isGood(url) = false)
 				   print "Its not an img!"
 				   
 				 else
@@ -101,7 +101,8 @@ Function Main()
 				 row = msg.GetIndex()
 				 col = msg.GetData()
 				 'print list[msg.GetData()].url
-				 showImg(list[msg.GetIndex()][msg.GetData()].url)
+				 showSlideShow(list[msg.GetIndex()][msg.GetData()].url,port)
+				 ' showImg(list[msg.GetIndex()][msg.GetData()].url)
 				' showImg("http://dudelol.com/img/took-way-to-long-for-me-to-notice.jpeg")
 				'  showImg("http://www.dudelol.com/img/doesnt-matter-had-sex39666.jpeg")
              endif
@@ -109,11 +110,27 @@ Function Main()
      end while
 End Function
 
+Function isGood(url as string) as Boolean
+	if(isImg(url) = false OR isGallery(url) = false OR isGif(url) = false)
+		return false
+	else
+		return true
+	endif
+End Function
+
+Function isGif(url as string) as Boolean
+	if(right(url, 3) <> "gif")
+		return true
+	else
+		return false
+	endif
+End Function
+
 Function fixImgur(url as string) as String
-if right(url, 3) <> "jpg" AND right(url, 3) <> "png" AND right(url, 3) <> "gif" AND right(url, 4) <> "jpeg"  then
-url = url + ".jpg"
+if right(url, 3) <> "jpg" AND right(url, 3) <> "png" AND right(url, 4) <> "jpeg"  then
+	url = url + ".jpg"
 endif
-return url
+	return url
 End Function
 
 Function isImg(url as string) As Boolean

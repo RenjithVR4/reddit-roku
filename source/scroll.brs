@@ -28,7 +28,7 @@ Function showImg(url)
 		  
     if bigbm = invalid
         print "bigbm create failed"
-        RenderImage(url, m.port)   'not sure why we cant always create a roBitmap, but when it fails use roSlideshow
+        showSlideShow(url, m.port)   'not sure why we cant always create a roBitmap, but when it fails use roSlideshow
     else
 	
 	ScreenWidth = screen.getwidth()
@@ -50,7 +50,7 @@ Function showImg(url)
         print "create region failed"
         stop
     endif
-    backgroundRegion.SetWrap(false)
+    backgroundRegion.SetWrap(true)
 
 	screen.SetPort(m.port)
     screen.drawobject(0, 0, backgroundRegion)
@@ -116,11 +116,10 @@ function Zip(screen, region, xd, yd)
     screen.SwapBuffers()
 end function
 
-Sub RenderImage(img, port)
+Sub showSlideShow(img, port)
     s = CreateObject("roSlideShow")
     s.SetMessagePort(port)
     s.SetContentList([{ Url: img }])
-   's.SetContentList([{ Url: "file://" + img }])
     s.Show()
     while not WaitMessage(port).isScreenClosed(): end while
 End Sub
