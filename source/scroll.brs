@@ -116,11 +116,13 @@ function Zip(screen, region, xd, yd)
     screen.SwapBuffers()
 end function
 
-Sub showSlideShow(img, port)
+Sub showSlideShow(list,start, port)
     s = CreateObject("roSlideShow")
     s.SetMessagePort(port)
-    s.SetContentList([{ Url: img }])
+    's.SetContentList([{ Url: img }])
+	s.SetContentList(list)
     s.Show()
+	s.SetNext(start, true)
     while not WaitMessage(port).isScreenClosed(): end while
 End Sub
 

@@ -101,7 +101,7 @@ Function Main()
 				 row = msg.GetIndex()
 				 col = msg.GetData()
 				 'print list[msg.GetData()].url
-				 showSlideShow(list[msg.GetIndex()][msg.GetData()].url,port)
+				 showSlideShow(list[msg.GetIndex()],msg.getData(), port)
 				 ' showImg(list[msg.GetIndex()][msg.GetData()].url)
 				' showImg("http://dudelol.com/img/took-way-to-long-for-me-to-notice.jpeg")
 				'  showImg("http://www.dudelol.com/img/doesnt-matter-had-sex39666.jpeg")
