@@ -4,6 +4,9 @@ Function Main()
 
 
 	initTheme()
+	
+	setSetting("someSetting", "some Value!!")
+	print getSetting("someSetting")
 
 	port=CreateObject("roMessagePort")
     grid = CreateObject("roGridScreen")
@@ -13,6 +16,7 @@ Function Main()
 
 	
     subReddits = CreateObject("roArray", 30, true)
+	subReddits.Push("Settings")
     subReddits.Push("funny")
 	subReddits.Push("pics")
     subReddits.Push("adviceanimals")
@@ -36,7 +40,13 @@ Function Main()
     grid.SetListNames(subReddits) 
 	list = CreateObject("roArray", 30, true)
 	
+
+	
     for j = 0 to subReddits.Count() - 1
+	if (j=0) then
+		settings = getSettingsGrid()
+		grid.SetContentList(0, settings)
+	else
 		list[j] = CreateObject("roArray", 28, true)
 		subReddit = subReddits[j]
 		api_url = "http://www.reddit.com/r/" + subReddit + ".json"
@@ -46,9 +56,10 @@ Function Main()
 		
 		
         grid.SetContentList(j, list[j]) 
+	END IF
      end for 
 	 
-	 grid.SetFocusedListItem(1,0)
+	 grid.SetFocusedListItem(2,0)
      grid.Show() 
 	 
     while true
@@ -74,6 +85,22 @@ Function Main()
          endif
      end while
 End Function
+
+Function getSettingsGrid()
+	settings = CreateObject("roArray", 28, true)
+	o = CreateObject("roAssociativeArray")
+	o.Title = "Settings"
+	o.SDPosterUrl = "http://www.dudelol.com/thumbs/your-thinking-beard-will-help.jpg"
+	o.HDPosterUrl = "http://www.dudelol.com/thumbs/your-thinking-beard-will-help.jpg"
+	settings.Push(o)
+	o = CreateObject("roAssociativeArray")
+	o.Title = "Login"
+	o.SDPosterUrl = "http://www.dudelol.com/thumbs/power-outlet-style.jpg"
+	o.HDPosterUrl = "http://www.dudelol.com/thumbs/power-outlet-style.jpg"	
+	settings.Push(o)
+	return settings
+	
+END FUNCTION
 
 Function parseJsonPosts(json)
 	tmpList = CreateObject("roArray", 28, true)
@@ -221,8 +248,8 @@ Function CreateDefaultTheme() as Object
 	theme.GridScreenLogoHD          = "pkg:/images/reddit-logo-hd.png"
 	
     theme.GridScreenLogoOffsetHD_X  = "35"
-    theme.GridScreenLogoOffsetHD_Y  = "20"
-    theme.GridScreenOverhangHeightHD = "121"
+    theme.GridScreenLogoOffsetHD_Y  = "23"
+    theme.GridScreenOverhangHeightHD = "124"
 
     theme.GridScreenLogoSD          = "pkg:/images/reddit-logo-sd.png"
     theme.GridScreenOverhangHeightSD = "81"
