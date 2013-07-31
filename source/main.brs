@@ -75,11 +75,19 @@ Function Main()
                  print " col: ";msg.GetData()
 				 row = msg.GetIndex()
 				 col = msg.GetData()
+				 'selectedGrid = 
+				 
+				 IF (row=0 AND col=1) THEN
+					'show the login screen
+					login()
+				 ELSE 
+				 
 				 list[msg.GetIndex()] = showSlideShow(list[msg.GetIndex()],msg.getData(), port)
 				 'populate any new reddit posts we got during the slideshow
 				 grid.SetContentList(msg.GetIndex(), list[msg.GetIndex()]) 
 				 'send the user back to the original location in the grid
 				 grid.SetListOffset(msg.GetIndex(),msg.getData())
+				 END IF
 				 
              endif
          endif
