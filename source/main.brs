@@ -22,23 +22,23 @@ Function Main()
 
 	
     subReddits = CreateObject("roArray", 30, true)
-    subReddits.Push("/r/funny")
-	subReddits.Push("/r/pics")
-    subReddits.Push("/r/adviceanimals")
-    subReddits.Push("/r/aww")
-  '  subReddits.Push("/r/books")
-   ' subReddits.Push("/r/earthporn")
-  '  subReddits.Push("/r/explainlikeimfive")
-  '  subReddits.Push("/r/gaming")
-   ' subReddits.Push("/r/gifs")
-  '  subReddits.Push("/r/IAmA")
-   ' subReddits.Push("/r/treecomics")
-   ' subReddits.Push("/r/news")
-   ' subReddits.Push("/r/science")
-   ' subReddits.Push("/r/technology")
-   ' subReddits.Push("/r/television")
-   ' subReddits.Push("/r/todayilearned")
-   ' subReddits.Push("/r/worldnews")
+    subReddits.Push("funny")
+	subReddits.Push("pics")
+    subReddits.Push("adviceanimals")
+    subReddits.Push("aww")
+  '  subReddits.Push("books")
+   ' subReddits.Push("earthporn")
+  '  subReddits.Push("explainlikeimfive")
+  '  subReddits.Push("gaming")
+   ' subReddits.Push("gifs")
+  '  subReddits.Push("IAmA")
+   ' subReddits.Push("treecomics")
+   ' subReddits.Push("news")
+   ' subReddits.Push("science")
+   ' subReddits.Push("technology")
+   ' subReddits.Push("television")
+   ' subReddits.Push("todayilearned")
+   ' subReddits.Push("worldnews")
     
 
     grid.SetupLists(subReddits.Count())
@@ -47,16 +47,55 @@ Function Main()
 	
     for j = 0 to subReddits.Count() - 1
 		list[j] = CreateObject("roArray", 28, true)
-		title = subReddits[j]
-		api_url = "http://www.reddit.com" + title + ".json"
+		subReddit = subReddits[j]
+		api_url = "http://www.reddit.com/r/" + subReddit + ".json"
+		print "original api_url= " + api_url
 		json = fetch_JSON(api_url)
+		list[j] = parseJsonPosts(json) 
+		
+		
+        grid.SetContentList(j, list[j]) 
+     end for 
+	 
+	 grid.SetFocusedListItem(1,0)
+     grid.Show() 
+	 
+    while true
+         msg = wait(0, port)
+         if type(msg) = "roGridScreenEvent" then
+             if msg.isScreenClosed() then
+                 return -1
+             elseif msg.isListItemFocused()
+                 print "Focused msg: ";msg.GetMessage();"row: ";msg.GetIndex();
+                 print " col: ";msg.GetData()
+             elseif msg.isListItemSelected()
+                 print "Selected msg: ";msg.GetMessage();"row: ";msg.GetIndex();
+                 print " col: ";msg.GetData()
+				 row = msg.GetIndex()
+				 col = msg.GetData()
+				 list[msg.GetIndex()] = showSlideShow(list[msg.GetIndex()],msg.getData(), port)
+				 'populate any new reddit posts we got during the slideshow
+				 grid.SetContentList(msg.GetIndex(), list[msg.GetIndex()]) 
+				 'send the user back to the original location in the grid
+				 grid.SetListOffset(msg.GetIndex(),msg.getData())
+				 
+             endif
+         endif
+     end while
+End Function
 
-		for each post in json.data.children
-				
+Function parseJsonPosts(json)
+	tmpList = CreateObject("roArray", 28, true)
+	subReddit = "declared"
+	print "loading more in parseJsonPosts"
+	for each post in json.data.children		
+				 IF(subReddit = "declared")
+					subReddit = post.data.subreddit
+				 END IF
+				 
 				 url = fixImgur(post.data.url)
 				 if(isGood(url) = false)
-				   print "Its not an img!"
-				   
+					 print "Its not an img!"			   
 				 else
 					 ups = post.data.ups.tostr()
 					 downs = post.data.downs.tostr()
@@ -87,42 +126,21 @@ Function Main()
 									VAlign:"VCenter", 
 									Direction:"LeftToRight" 
 									}
-					 list[j].Push(o)
-				 
+					 tmpList.Push(o)
 				 endif
 		end for
-		more = CreateObject("roAssociativeArray")
+		
 		'need to store the after variable we can load the next set of posts
+		more = CreateObject("roAssociativeArray")		
 		more.After = json.data.after 
-		more.Url = "http://www.dudelol.com/img/im-not-a-penguin.png"
-		list[j].Push(more)
-        grid.SetContentList(j, list[j]) 
-     end for 
-	 
-	 grid.SetFocusedListItem(1,0)
-     grid.Show() 
-	 
-    while true
-         msg = wait(0, port)
-         if type(msg) = "roGridScreenEvent" then
-             if msg.isScreenClosed() then
-                 return -1
-             elseif msg.isListItemFocused()
-                 print "Focused msg: ";msg.GetMessage();"row: ";msg.GetIndex();
-                 print " col: ";msg.GetData()
-             elseif msg.isListItemSelected()
-                 print "Selected msg: ";msg.GetMessage();"row: ";msg.GetIndex();
-                 print " col: ";msg.GetData()
-				 row = msg.GetIndex()
-				 col = msg.GetData()
-				 showSlideShow(list[msg.GetIndex()],msg.getData(), port)
-				 ' showImg(list[msg.GetIndex()][msg.GetData()].url)
-				' showImg("http://dudelol.com/img/took-way-to-long-for-me-to-notice.jpeg")
-				'  showImg("http://www.dudelol.com/img/doesnt-matter-had-sex39666.jpeg")
-             endif
-         endif
-     end while
-End Function
+		more.Url = "pkg:/images/loading.png" 'shows the loading screen
+		'get the subreddit from the json
+		print subReddit
+		more.SubReddit = subReddit		
+		tmpList.Push(more)
+		'return the new subreddit posts
+		return tmpList
+END FUNCTION
 
 Function isGood(url as string) as Boolean
 	if(isImg(url) = false OR isGallery(url) = false OR isGif(url) = false)

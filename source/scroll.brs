@@ -130,11 +130,11 @@ end function
 function showSlideShow(list,start, port)
     s = CreateObject("roSlideShow")
     s.SetMessagePort(port)
-	s.SetTextOverlayHoldTime(9000)
+	s.SetTextOverlayHoldTime(1000)   ' 1 second = 1000 milaseconds
 	' s.SetTextOverlayIsVisible(true)
 	s.SetUnderscan(3) ' gives a padding around the image because TVs cut off the outer part of the image sometimes
 	' s.SetDisplayMode("photo-fit") 'I think default is best
-	s.SetPeriod(9) ' dont need this
+	s.SetPeriod(1) ' dont need this
 	
 	s.SetContentList(list)
     s.Show()
@@ -160,10 +160,30 @@ function showSlideShow(list,start, port)
 			 IF msg.isPlaybackPosition() THEN
 			    IF msg.GetIndex() = (list.count() -1) THEN
 					'load more reddit posts
+					s.Pause()
 					originalIndex = list.count() -1
-					print "attempting to get the after"
+					
 					after = list[list.count() -1].After
-					print after
+					subReddit = list[list.count() -1].subReddit
+					print "attempting to get the after= " + after
+					api_url = "http://www.reddit.com/r/" + subReddit + ".json?after=" + after
+					print "api_url="+ api_url
+					json = fetch_JSON(api_url)
+					newList = parseJsonPosts(json)
+					
+					'remove the last array entry because it contains the old After 					
+					list.Pop()
+					list.Append(newList)
+					print "done adding to the list"
+					
+					'add the new content to the list
+					's.AddContent(newList)
+					s.SetContentList(list)
+					s.Show()
+					s.SetNext(originalIndex, true)
+					s.Resume()
+
+					
 				END IF
 			 END IF
 			 if msg.isButtonPressed() then
