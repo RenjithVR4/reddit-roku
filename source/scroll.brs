@@ -116,7 +116,7 @@ function Zip(screen, region, xd, yd)
     screen.SwapBuffers()
 end function
 
-Sub showSlideShow(list,start, port)
+function showSlideShow(list,start, port)
     s = CreateObject("roSlideShow")
     s.SetMessagePort(port)
 	s.SetTextOverlayHoldTime(9000)
@@ -125,18 +125,18 @@ Sub showSlideShow(list,start, port)
 	' s.SetDisplayMode("photo-fit") 'I think default is best
 	s.SetPeriod(9) ' dont need this
 	
-    's.SetContentList([{ Url: img }])
 	s.SetContentList(list)
     s.Show()
 	s.SetNext(start, true)
-	
-    while not WaitMessage(port).isScreenClosed(): end while
-End Sub
-
-'This is a wait wrapper that ignores invalid message objects (from debugging)
-Sub WaitMessage(port) As Object
-    while true
-        msg = wait(0, port)
-        if msg <> invalid return msg
+	msg = "declaring"
+	while true
+         msg = wait(0, port)
+         if type(msg) = "roSlideShowEvent" then
+             if msg.isScreenClosed() then
+                 return list
+			 end if
+		 end if
     end while
-End Sub
+	
+End function
+

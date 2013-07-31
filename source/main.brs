@@ -24,13 +24,13 @@ Function Main()
     subReddits = CreateObject("roArray", 30, true)
     subReddits.Push("/r/funny")
 	subReddits.Push("/r/pics")
-  '  subReddits.Push("/r/adviceanimals")
-   ' subReddits.Push("/r/aww")
+    subReddits.Push("/r/adviceanimals")
+    subReddits.Push("/r/aww")
   '  subReddits.Push("/r/books")
    ' subReddits.Push("/r/earthporn")
   '  subReddits.Push("/r/explainlikeimfive")
   '  subReddits.Push("/r/gaming")
-    subReddits.Push("/r/gifs")
+   ' subReddits.Push("/r/gifs")
   '  subReddits.Push("/r/IAmA")
    ' subReddits.Push("/r/treecomics")
    ' subReddits.Push("/r/news")
@@ -96,7 +96,10 @@ Function Main()
 		end for
          grid.SetContentList(j, list[j]) 
      end for 
+	 
+	 grid.SetFocusedListItem(1,0)
      grid.Show() 
+	 
     while true
          msg = wait(0, port)
          if type(msg) = "roGridScreenEvent" then
@@ -110,7 +113,6 @@ Function Main()
                  print " col: ";msg.GetData()
 				 row = msg.GetIndex()
 				 col = msg.GetData()
-				 'print list[msg.GetData()].url
 				 showSlideShow(list[msg.GetIndex()],msg.getData(), port)
 				 ' showImg(list[msg.GetIndex()][msg.GetData()].url)
 				' showImg("http://dudelol.com/img/took-way-to-long-for-me-to-notice.jpeg")
