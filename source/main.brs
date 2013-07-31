@@ -3,15 +3,6 @@ Library "v30/bslCore.brs"
 Function Main()
 
 
-	' Pop up start of UI for some instant feedback while we load the icon data
-	' poster=uitkPreShowPosterMenu()
-	' poster = loadingScreen()
-	'if poster=invalid then
-	'	print "unexpected error in uitkPreShowPosterMenu"
-
-	'end if
-
-
 	initTheme()
 
 	port=CreateObject("roMessagePort")
@@ -254,3 +245,8 @@ Function CreateDefaultTheme() as Object
     return theme
 End Function
 
+Function IsHD()
+    di = CreateObject("roDeviceInfo")
+    if di.GetDisplayType() = "HDTV" then return true
+    return false
+End Function
