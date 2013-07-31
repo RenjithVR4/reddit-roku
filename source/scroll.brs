@@ -161,8 +161,8 @@ function showSlideShow(list,start, port)
 			    IF msg.GetIndex() = (list.count() -1) THEN
 					'load more reddit posts
 					s.Pause()
+
 					originalIndex = list.count() -1
-					
 					after = list[list.count() -1].After
 					subReddit = list[list.count() -1].subReddit
 					print "attempting to get the after= " + after
@@ -175,9 +175,9 @@ function showSlideShow(list,start, port)
 					list.Pop()
 					list.Append(newList)
 					print "done adding to the list"
-					
 					'add the new content to the list
 					's.AddContent(newList)
+					s.ClearContent()
 					s.SetContentList(list)
 					s.Show()
 					s.SetNext(originalIndex, true)
