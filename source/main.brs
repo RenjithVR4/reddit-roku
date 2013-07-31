@@ -46,13 +46,11 @@ Function Main()
 	list = CreateObject("roArray", 30, true)
 	
     for j = 0 to subReddits.Count() - 1
-		list[j] = CreateObject("roArray", 10, true)
+		list[j] = CreateObject("roArray", 28, true)
 		title = subReddits[j]
 		api_url = "http://www.reddit.com" + title + ".json"
-		
-		print api_url
 		json = fetch_JSON(api_url)
-		print json
+
 		for each post in json.data.children
 				
 				 url = fixImgur(post.data.url)
@@ -92,9 +90,13 @@ Function Main()
 					 list[j].Push(o)
 				 
 				 endif
-		
 		end for
-         grid.SetContentList(j, list[j]) 
+		more = CreateObject("roAssociativeArray")
+		'need to store the after variable we can load the next set of posts
+		more.After = json.data.after 
+		more.Url = "http://www.dudelol.com/img/im-not-a-penguin.png"
+		list[j].Push(more)
+        grid.SetContentList(j, list[j]) 
      end for 
 	 
 	 grid.SetFocusedListItem(1,0)

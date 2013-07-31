@@ -139,12 +139,15 @@ function showSlideShow(list,start, port)
 	s.SetContentList(list)
     s.Show()
 	s.SetNext(start, true)
+	
 	msg = "declaring"
+	loading = false
+	
 	while true
          msg = wait(0, port)
          if type(msg) = "roSlideShowEvent" then
              if msg.isScreenClosed() then
-                 return list
+                 return list 'when the user closes the screen return any new reddit posts we downloaded
 			 end if
 			 if msg.isPaused() then
 				print "adding btns"
@@ -154,6 +157,15 @@ function showSlideShow(list,start, port)
 				print "removing btns"
                  s.ClearButtons()
 			 end if
+			 IF msg.isPlaybackPosition() THEN
+			    IF msg.GetIndex() = (list.count() -1) THEN
+					'load more reddit posts
+					originalIndex = list.count() -1
+					print "attempting to get the after"
+					after = list[list.count() -1].After
+					print after
+				END IF
+			 END IF
 			 if msg.isButtonPressed() then
 				IF msg.GetIndex() = 1 THEN
 					print "User hit resume"
@@ -178,6 +190,8 @@ function showSlideShow(list,start, port)
 				IF msg.GetIndex() = 7 THEN
 					print "hide text overlay"
 					s.SetTextOverlayIsVisible(false)
+					s.ClearButtons()
+					s.Resume()
 				END IF
 				end if
 			 
