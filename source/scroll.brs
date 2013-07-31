@@ -116,6 +116,17 @@ function Zip(screen, region, xd, yd)
     screen.SwapBuffers()
 end function
 
+function addButtons(s) as Object
+s.AddButton(1, "Resume") 
+s.AddButton(2, "Upvote") 
+s.AddButton(3, "Downvote") 
+s.AddButton(4, "View Comments") 
+s.AddButton(5, "Save Post") 
+s.AddButton(6, "View Full Img(Beta)") 
+s.AddButton(7, "Hide Title Text Overlay") 
+return s
+end function
+
 function showSlideShow(list,start, port)
     s = CreateObject("roSlideShow")
     s.SetMessagePort(port)
@@ -135,6 +146,41 @@ function showSlideShow(list,start, port)
              if msg.isScreenClosed() then
                  return list
 			 end if
+			 if msg.isPaused() then
+				print "adding btns"
+                 s = addButtons(s)
+			 end if
+			 if msg.isResumed() then
+				print "removing btns"
+                 s.ClearButtons()
+			 end if
+			 if msg.isButtonPressed() then
+				IF msg.GetIndex() = 1 THEN
+					print "User hit resume"
+					s.ClearButtons()
+					s.Resume()
+				END IF
+				IF msg.GetIndex() = 2 THEN
+					print "User hit upvote btn"
+				END IF
+				IF msg.GetIndex() = 3 THEN
+					print "User hit downvote btn"
+				END IF
+				IF msg.GetIndex() = 4 THEN
+					print "view comments"
+				END IF
+				IF msg.GetIndex() = 5 THEN
+					print "save post"
+				END IF
+				IF msg.GetIndex() = 6 THEN
+					print "view full img"
+				END IF
+				IF msg.GetIndex() = 7 THEN
+					print "hide text overlay"
+					s.SetTextOverlayIsVisible(false)
+				END IF
+				end if
+			 
 		 end if
     end while
 	
