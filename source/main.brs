@@ -2,7 +2,6 @@ Library "v30/bslCore.brs"
 
 Function Main()
 
-
 	initTheme()
 	
 	setSetting("someSetting", "some Value!!")
@@ -14,26 +13,8 @@ Function Main()
     grid.SetDisplayMode("scale-to-fit")
     grid.SetGridStyle("Flat-Square")
 
-	
-    subReddits = CreateObject("roArray", 30, true)
-	subReddits.Push("Settings")
-    subReddits.Push("funny")
-	subReddits.Push("pics")
-    subReddits.Push("adviceanimals")
-    subReddits.Push("aww")
-  '  subReddits.Push("books")
-   ' subReddits.Push("earthporn")
-  '  subReddits.Push("explainlikeimfive")
-  '  subReddits.Push("gaming")
-   ' subReddits.Push("gifs")
-  '  subReddits.Push("IAmA")
-   ' subReddits.Push("treecomics")
-   ' subReddits.Push("news")
-   ' subReddits.Push("science")
-   ' subReddits.Push("technology")
-   ' subReddits.Push("television")
-   ' subReddits.Push("todayilearned")
-   ' subReddits.Push("worldnews")
+	subReddits = getSubreddits()
+
     
 
     grid.SetupLists(subReddits.Count())
@@ -93,6 +74,48 @@ Function Main()
          endif
      end while
 End Function
+
+function getDefaultSubreddits()
+    subReddits = CreateObject("roArray", 30, true)
+	subReddits.Push("Settings")
+    subReddits.Push("funny")
+	subReddits.Push("pics")
+    subReddits.Push("adviceanimals")
+    subReddits.Push("aww")
+  '  subReddits.Push("books")
+   ' subReddits.Push("earthporn")
+  '  subReddits.Push("explainlikeimfive")
+  '  subReddits.Push("gaming")
+   ' subReddits.Push("gifs")
+  '  subReddits.Push("IAmA")
+   ' subReddits.Push("treecomics")
+   ' subReddits.Push("news")
+   ' subReddits.Push("science")
+   ' subReddits.Push("technology")
+   ' subReddits.Push("television")
+   ' subReddits.Push("todayilearned")
+   ' subReddits.Push("worldnews")
+   return subReddits
+END FUNCTION
+
+function getSubreddits()
+	if(isLoggedIn() = true)
+		subReddits = CreateObject("roArray", 300, true)
+		http = NewHttp2("http://www.reddit.com/reddits/mine.json", "application/json")
+		response= http.GetToStringWithTimeout(90)
+		json = ParseJSON(response)
+		for each post in json.data.children	
+			subReddits.Push(post.data.display_name)
+		end for
+		
+		return subReddits
+	else
+		subReddits =getDefaultSubreddits()
+		return subReddits
+
+   END IF
+
+END FUNCTION
 
 Function getSettingsGrid()
 	settings = CreateObject("roArray", 28, true)
@@ -279,6 +302,18 @@ Function CreateDefaultTheme() as Object
 
     return theme
 End Function
+
+
+Function showMessage(msg As String)
+	port = CreateObject("roMessagePort") 
+	dialog = CreateObject( "roOneLineDialog" )
+	dialog.SetMessagePort(port)
+	dialog.SetTitle( msg )
+	dialog.Show()
+	sleep(4000)
+	return -1
+END FUNCTION 
+
 
 Function IsHD()
     di = CreateObject("roDeviceInfo")

@@ -7,7 +7,9 @@ password = getUserInput("Login - Password", "Enter your Reddit password", "abc12
 print "I got username = "+username 
 print "I got pw = "+password
 
-http = NewHttp2("http://www.reddit.com/api/login", "application/json")
+'http = NewHttp2("http://www.reddit.com/api/login", "application/json")
+http = NewHttp2("https://ssl.reddit.com/api/login", "application/json")
+
 http.AddParam("user", username)
 http.AddParam("passwd", password)
 http.AddParam("api_type", "json")
@@ -20,7 +22,9 @@ print response
 print json.json.errors
 
 IF(json.json.errors.count() > 0 ) then
-print "wrong password"
+print "error logging in"
+showMessage("Unable to login, reason:" + json.json.errors[1] )
+return "fail"
 else
 
 modhash = json.json.data.modhash
@@ -28,12 +32,28 @@ cookie = json.json.data.cookie
 setSetting("modhash", modhash)
 setSetting("cookie", cookie)
 setSetting("username", username)
+return username
 END IF
 
-'print response.json.data.modhash
-return "yay"
-
 END FUNCTION
+
+FUNCTION isLoggedIn() as Boolean
+	if(getSetting("username") <> invalid)
+		return true
+	else
+		return false
+	END IF
+END FUNCTION
+
+FUNCTION getModhash() as String
+	modhash = getSetting("username")
+	if(modhash <> invalid)
+		return modhash
+	else
+		return invalid
+	END IF
+END FUNCTION
+
 
 FUNCTION getUserInput(title, dspText, default) as String
 	 screen = CreateObject("roKeyboardScreen")

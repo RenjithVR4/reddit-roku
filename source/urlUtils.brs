@@ -51,6 +51,11 @@ Function CreateURLTransferObject2(url As String, contentHeader As String) as Obj
     obj.SetPort(CreateObject("roMessagePort"))
     obj.SetUrl(url)
         obj.AddHeader("Content-Type", contentHeader)
+		obj.AddHeader("User-Agent", "roku/1.0")
+		cookie = getSetting("cookie") 
+		if(cookie <> invalid)
+			obj.AddHeader("Cookie", "reddit_session="+cookie)
+		END IF
     obj.EnableEncodings(true)
     return obj
 End Function
