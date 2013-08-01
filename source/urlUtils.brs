@@ -54,6 +54,7 @@ Function CreateURLTransferObject2(url As String, contentHeader As String) as Obj
 		obj.AddHeader("User-Agent", "roku/1.0")
 		cookie = getSetting("cookie") 
 		if(cookie <> invalid)
+			print "adding cookie= "+ cookie
 			obj.AddHeader("Cookie", "reddit_session="+cookie)
 		END IF
     obj.EnableEncodings(true)
@@ -241,7 +242,7 @@ Function http_post_from_string_with_timeout(val As String, seconds as Integer) a
     if (m.Http.AsyncPostFromString(val))
         event = wait(timeout%, m.Http.GetPort())
         if type(event) = "roUrlEvent"
-                        'print "***";event.GetInt();"***";event.GetResponseCode();"***";event.GetFailureReason();"***";event.GetSourceIdentity()
+                        print "***";event.GetInt();"***";event.GetResponseCode();"***";event.GetFailureReason();"***";event.GetSourceIdentity()
                         resArray.push(event.GetString())
                         resArray.push(event.GetResponseHeadersArray())
         elseif event = invalid

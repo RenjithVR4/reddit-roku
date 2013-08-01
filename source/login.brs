@@ -1,38 +1,50 @@
-
 Function login()
 
-username = getUserInput("Login - Username", "Enter your Reddit username", "faketestuser")
-password = getUserInput("Login - Password", "Enter your Reddit password", "abc123")
+	'username = getUserInput("Login - Username", "Enter your Reddit username", "faketestuser")
+	'password = getUserInput("Login - Password", "Enter your Reddit password", "abc123")
+	username ="faketestuserxx"
+	password = "abc123"
+	
+	http = NewHttp2("http://www.reddit.com/api/login", "application/json") 'we want to use SSL encryption so we dont send a plaintext password 
+	'http = NewHttp2("https://ssl.reddit.com/api/login", "application/json")
 
-print "I got username = "+username 
-print "I got pw = "+password
+	http.AddParam("user", username)
+	http.AddParam("passwd", password)
+	http.AddParam("api_type", "json")
+	http.AddParam("rem", "false")
+	response= http.PostFromStringWithTimeout("", 90)
+	print "resp[0]= " + response[0]
+	json = ParseJSON(response[0])
+	' response[1] contains the header information
 
-'http = NewHttp2("http://www.reddit.com/api/login", "application/json")
-http = NewHttp2("https://ssl.reddit.com/api/login", "application/json")
-
-http.AddParam("user", username)
-http.AddParam("passwd", password)
-http.AddParam("api_type", "json")
-http.AddParam("rem", "false")
-response= http.PostFromStringWithTimeout("", 90)
-json = ParseJSON(response[0])
-' response[1] contains the header information
-print response
-
-IF(json.json.errors.count() > 0 ) then
-print "error logging in"
-showMessage("Unable to login, reason:" + json.json.errors[1] )
-return "fail"
+	print  json.json.DoesExist("errors")
+	
+IF(json = invalid ) then
+	print "error logging in"
+	showMessage("Unable to login" )
+	return "fail"
+else if(json.json.DoesExist("errors") = true AND json.json.errors.count() > 0 )
+	'reasonAry = json.json.errors
+	'reason = reasonAry[1]  ' cant figure out why this variable is invalid
+	'showMessage("Unable to login, reason:" +  reason)
+	showMessage("Unable to login")
+	return "fail"
 else
-
-modhash = json.json.data.modhash
-cookie = json.json.data.cookie
-setSetting("modhash", modhash)
-setSetting("cookie", cookie)
-setSetting("username", username)
-return username
+	print "login worked!"
+	print json.json.data.cookie
+	modhash = json.json.data.modhash
+	cookie = json.json.data.cookie
+	setSetting("modhash", modhash)
+	setSetting("cookie", cookie)
+	setSetting("username", username)
+	return username
 END IF
+END FUNCTION
 
+FUNCTION logout()
+	deleteSetting("modhash")
+	deleteSetting("cookie")
+	deleteSetting("username")
 END FUNCTION
 
 FUNCTION isLoggedIn() as Boolean
@@ -80,4 +92,10 @@ FUNCTION getUserInput(title, dspText, default) as String
              endif
          endif
      end while 
+END FUNCTION
+
+FUNCTION dumpArray(ary)
+	for j = 0 to ary.Count() - 1
+		print ary[j]
+	end for
 END FUNCTION

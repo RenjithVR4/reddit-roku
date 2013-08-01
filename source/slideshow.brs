@@ -51,11 +51,7 @@ function showSlideShow(list,start, port)
 					originalIndex = list.count() -1
 					after = list[list.count() -1].After
 					subReddit = list[list.count() -1].subReddit
-					print "attempting to get the after= " + after
-					api_url = "http://www.reddit.com/r/" + subReddit + ".json?after=" + after
-					print "api_url="+ api_url
-					json = fetch_JSON(api_url)
-					newList = parseJsonPosts(json)
+					newList = loadMorePosts(subReddit, after)
 					
 					'remove the last array entry because it contains the old After 					
 					list.Pop()
@@ -108,3 +104,10 @@ function showSlideShow(list,start, port)
 	
 End function
 
+FUNCTION loadMorePosts(subReddit as String, after as String)
+	print "attempting to get the after= " + after
+	api_url = "http://www.reddit.com/r/" + subReddit + ".json?after=" + after
+	json = fetch_JSON(api_url)
+	newList = parseJsonPosts(json)
+	return newList
+END FUNCTION
