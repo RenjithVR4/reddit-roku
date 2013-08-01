@@ -105,7 +105,7 @@ function getBlockedSubreddits()
     subReddits.Push("books")
     subReddits.Push("announcements")
     subReddits.Push("explainlikeimfive")
-  '  subReddits.Push("gaming")
+    subReddits.Push("videos")
     subReddits.Push("gifs")
   '  subReddits.Push("IAmA")
    ' subReddits.Push("treecomics")
@@ -119,6 +119,12 @@ function getBlockedSubreddits()
 END FUNCTION
 
 function getSubreddits()
+subReddits = CreateObject("roArray", 300, true)
+subReddits.Push("settings")
+subReddits.Push("aww")
+return subReddits
+
+
 	if(isLoggedIn() = true)
 		blocked = getBlockedSubreddits()
 		subReddits = CreateObject("roArray", 300, true)
@@ -181,6 +187,7 @@ Function parseJsonPosts(json)
 				 END IF
 				 
 				 url = fixImgur(post.data.url)
+				 
 				 if(isGood(url) = false)
 					 print "Its not an img!"			   
 				 else
@@ -191,12 +198,18 @@ Function parseJsonPosts(json)
 					 o.Title = post.data.title
 					 o.TextOverlayBody = post.data.title
 					 o.Url = url
+					 print "url="+url
+					 print "thumb=" + post.data.thumbnail
 					 o.SDPosterUrl = post.data.thumbnail
 					 o.HDPosterUrl = post.data.thumbnail
 					 o.ShortDescriptionLine1 = "Upvotes: " + ups + " - Downvotes: " + downs
 					 o.ShortDescriptionLine2 = post.data.url
 					 o.Description = "Upvotes: " + ups + " - Downvotes: " + downs + "     " + post.data.url
-					 o.Rating = "NR"
+					 o.Rating = "NSFW"
+					 o.ups = ups
+					 o.downs = downs
+					 o.id = post.data.id
+					 o.selftext = post.data.selftext
 					 o.StarRating = "100"
 					 o.ReleaseDate = "[<mm/dd/yyyy]"
 					 o.Length = 5400
@@ -220,6 +233,7 @@ Function parseJsonPosts(json)
 		'need to store the after variable we can load the next set of posts
 		more = CreateObject("roAssociativeArray")		
 		more.After = json.data.after 
+		more.Title = "Load More"
 		more.Url = "pkg:/images/loading.png" 'shows the loading screen
 		'get the subreddit from the json
 		print subReddit
@@ -246,6 +260,10 @@ Function isGif(url as string) as Boolean
 End Function
 
 Function fixImgur(url as string) as String
+if(Instr(1, url, "imgur.com")=0) 'if the domain is not imgur return the original URL
+	return url
+END IF
+
 if right(url, 3) <> "jpg" AND right(url, 3) <> "png" AND right(url, 4) <> "jpeg"  then
 	url = url + ".jpg"
 endif

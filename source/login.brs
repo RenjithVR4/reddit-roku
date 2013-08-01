@@ -19,8 +19,6 @@ json = ParseJSON(response[0])
 ' response[1] contains the header information
 print response
 
-print json.json.errors
-
 IF(json.json.errors.count() > 0 ) then
 print "error logging in"
 showMessage("Unable to login, reason:" + json.json.errors[1] )

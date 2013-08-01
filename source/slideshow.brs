@@ -1,7 +1,4 @@
 
-
-
-
 function addButtons(s) as Object
 s.AddButton(1, "Resume") 
 s.AddButton(2, "Upvote") 
@@ -28,6 +25,7 @@ function showSlideShow(list,start, port)
 	
 	msg = "declaring"
 	loading = false
+	row = invalid
 	
 	while true
          msg = wait(0, port)
@@ -44,6 +42,8 @@ function showSlideShow(list,start, port)
                  s.ClearButtons()
 			 end if
 			 IF msg.isPlaybackPosition() THEN
+			 
+				row = msg.GetIndex()   'keeps the variable row supplied with the list index
 			    IF msg.GetIndex() = (list.count() -1) THEN
 					'load more reddit posts
 					s.Pause()
@@ -87,6 +87,7 @@ function showSlideShow(list,start, port)
 				END IF
 				IF msg.GetIndex() = 4 THEN
 					print "view comments"
+					showComments(list[row])
 				END IF
 				IF msg.GetIndex() = 5 THEN
 					print "save post"
