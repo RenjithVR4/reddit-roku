@@ -98,16 +98,54 @@ function getDefaultSubreddits()
    return subReddits
 END FUNCTION
 
+function getBlockedSubreddits()
+    subReddits = CreateObject("roArray", 30, true)
+    subReddits.Push("funny")
+	subReddits.Push("pics")
+    subReddits.Push("books")
+    subReddits.Push("announcements")
+    subReddits.Push("explainlikeimfive")
+  '  subReddits.Push("gaming")
+    subReddits.Push("gifs")
+  '  subReddits.Push("IAmA")
+   ' subReddits.Push("treecomics")
+    subReddits.Push("news")
+    subReddits.Push("blog")
+   ' subReddits.Push("technology")
+   ' subReddits.Push("television")
+    subReddits.Push("todayilearned")
+    subReddits.Push("worldnews")
+   return subReddits
+END FUNCTION
+
 function getSubreddits()
 	if(isLoggedIn() = true)
+		blocked = getBlockedSubreddits()
 		subReddits = CreateObject("roArray", 300, true)
+		'always include these subreddits first
+		subReddits.Push("Settings")
+		subReddits.Push("funny")
+		subReddits.Push("pics")
 		http = NewHttp2("http://www.reddit.com/reddits/mine.json", "application/json")
 		response= http.GetToStringWithTimeout(90)
 		json = ParseJSON(response)
 		for each post in json.data.children	
-			subReddits.Push(post.data.display_name)
+			found = false
+			'block the blocked subreddits
+			for i = 0 to blocked.Count() - 1 
+				name =  LCase(post.data.display_name)
+				if (name = blocked[i]) THEN
+					found = true
+				END IF
+			end for
+			if(found = false) THEN
+					subReddits.Push(name)
+			END IF
 		end for
 		
+		if(subReddits.Count() < 3)
+			subReddits = getDefaultSubreddits()
+		END IF
 		return subReddits
 	else
 		subReddits =getDefaultSubreddits()
