@@ -44,14 +44,20 @@ END FUNCTION
 Function parseJsonPosts(json)
 	tmpList = CreateObject("roArray", 28, true)
 	subReddit = "declared"
+	if(json.data.DoesExist("modhash")=true)
+		print "updating new modhash="+ json.data.modhash
+		setSetting("modhash", json.data.modhash)
+	END IF
+	
 	for each post in json.data.children		
 				 IF(subReddit = "declared")
 					subReddit = post.data.subreddit
 				 END IF
 				 
 				 url = fixImgur(post.data.url)
+				 self = post.data.is_self
 				 
-				 if(isGood(url) = false)
+				 if((isGood(url) = false) AND (self = false))
 					 print "Its not an img!"			   
 				 else
 					 ups = post.data.ups.tostr()
@@ -60,9 +66,18 @@ Function parseJsonPosts(json)
 					 o.ContentType = "episode"
 					 o.Title = post.data.title
 					 o.TextOverlayBody = post.data.title
-					 o.Url = url
-					 o.SDPosterUrl = post.data.thumbnail
-					 o.HDPosterUrl = post.data.thumbnail
+					 if(self=true)
+						 o.Url = ""
+						 o.SDPosterUrl = "pkg:/images/self.png" 
+						 o.HDPosterUrl = "pkg:/images/self.png" 
+						 o.self = true
+					 else
+						 o.Url = url
+						 o.SDPosterUrl = post.data.thumbnail
+						 o.HDPosterUrl = post.data.thumbnail
+						 o.self=false
+					 END IF
+
 					 o.ShortDescriptionLine1 = "Upvotes: " + ups + " - Downvotes: " + downs
 					 o.ShortDescriptionLine2 = post.data.url
 					 o.Description = "Upvotes: " + ups + " - Downvotes: " + downs + "     " + post.data.url
@@ -74,6 +89,7 @@ Function parseJsonPosts(json)
 					 o.StarRating = "100"
 					 o.ReleaseDate = "[<mm/dd/yyyy]"
 					 o.Length = 5400
+					 o.minBandwidth = 20
 					 o.Actors = []
 					 o.Actors.Push("Posted by: "+ post.data.author)
 					 o.Actors.Push("domain: " + post.data.domain)
@@ -95,6 +111,7 @@ Function parseJsonPosts(json)
 		more = CreateObject("roAssociativeArray")		
 		more.After = json.data.after 
 		more.Title = "Load More"
+		more.self=true 'the self post remover will remove it unless this is true
 		more.Url = "pkg:/images/loading.png" 'shows the loading screen
 		'get the subreddit from the json
 		print subReddit

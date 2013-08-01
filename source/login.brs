@@ -2,7 +2,7 @@ Function login()
 
 	'username = getUserInput("Login - Username", "Enter your Reddit username", "faketestuser")
 	'password = getUserInput("Login - Password", "Enter your Reddit password", "abc123")
-	username ="faketestuserxx"
+	username ="faketestuser"
 	password = "abc123"
 	
 	http = NewHttp2("http://www.reddit.com/api/login", "application/json") 'we want to use SSL encryption so we dont send a plaintext password 
@@ -37,6 +37,7 @@ else
 	setSetting("modhash", modhash)
 	setSetting("cookie", cookie)
 	setSetting("username", username)
+	loadMainGrid()
 	return username
 END IF
 END FUNCTION
@@ -45,6 +46,7 @@ FUNCTION logout()
 	deleteSetting("modhash")
 	deleteSetting("cookie")
 	deleteSetting("username")
+	loadMainGrid()
 END FUNCTION
 
 FUNCTION isLoggedIn() as Boolean

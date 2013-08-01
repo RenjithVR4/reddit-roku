@@ -19,7 +19,7 @@ function showSlideShow(list,start, port)
 	' s.SetDisplayMode("photo-fit") 'I think default is best
 	s.SetPeriod(1) ' dont need this
 	
-	s.SetContentList(list)
+	s.SetContentList(removeSelfPosts(list))
     s.Show()
 	s.SetNext(start, true)
 	
@@ -110,4 +110,16 @@ FUNCTION loadMorePosts(subReddit as String, after as String)
 	json = fetch_JSON(api_url)
 	newList = parseJsonPosts(json)
 	return newList
+END FUNCTION
+
+FUNCTION removeSelfPosts(list)
+	i=0
+	'for i = 0 to list.Count() - 1
+	for each post in list
+		if (post.self=true) then
+			list.Delete(i)
+		END IF
+	i=i+1
+	end for
+	return list
 END FUNCTION

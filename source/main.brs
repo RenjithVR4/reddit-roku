@@ -1,12 +1,11 @@
 Library "v30/bslCore.brs"
 
 Function Main()
-
 	initTheme()
-	
-	setSetting("someSetting", "some Value!!")
-	print getSetting("someSetting")
+	loadMainGrid()
+End Function
 
+function loadMainGrid()
 	port=CreateObject("roMessagePort")
     grid = CreateObject("roGridScreen")
     grid.SetMessagePort(port)
@@ -14,8 +13,6 @@ Function Main()
     grid.SetGridStyle("Flat-Square")
 
 	subReddits = getSubreddits()
-
-    
 
     grid.SetupLists(subReddits.Count())
     grid.SetListNames(subReddits) 
@@ -75,15 +72,14 @@ Function Main()
              endif
          endif
      end while
-End Function
-
+END FUNCTION
 
 
 function getSubreddits()
-subReddits = CreateObject("roArray", 300, true)
-subReddits.Push("settings")
-subReddits.Push("aww")
-return subReddits
+'subReddits = CreateObject("roArray", 300, true)
+'subReddits.Push("settings")
+'subReddits.Push("aww")
+'return subReddits
 
 
 	if(isLoggedIn() = true)
