@@ -11,15 +11,16 @@ return s
 end function
 
 function showSlideShow(originalList,start, port)
-
+	after = getTheAfter(originalList)	
 	list= removeSelfPosts(originalList)
+	activeListCount = list.count()
     s = CreateObject("roSlideShow")
     s.SetMessagePort(port)
-	s.SetTextOverlayHoldTime(1000)   ' 1 second = 1000 milaseconds
+	s.SetTextOverlayHoldTime(9000)   ' 1 second = 1000 milaseconds
 	' s.SetTextOverlayIsVisible(true)
 	s.SetUnderscan(3) ' gives a padding around the image because TVs cut off the outer part of the image sometimes
 	' s.SetDisplayMode("photo-fit") 'I think default is best
-	s.SetPeriod(1) ' dont need this
+	s.SetPeriod(9) ' dont need this
 	
 	s.SetContentList(list)
     s.Show()
@@ -30,7 +31,23 @@ function showSlideShow(originalList,start, port)
 	row = invalid
 	
 	while true
-         msg = wait(0, port)
+         
+		 
+		 		if(after <> invalid)
+						subReddit = list[0].subReddit
+						newList = loadMorePosts(subReddit, after)
+						after = getTheAfter(newList)	
+									
+						newListRemovedSelf = removeSelfPosts(newList)
+						
+						'make sure the new subreddits we found contained at least one image
+						if(newListRemovedSelf.count() > 1)
+							print "adding more posts count= " + newListRemovedSelf.count().tostr()
+							list.Append(newListRemovedSelf)	
+						END IF
+				END IF
+		 
+		 msg = wait(0, port)
          if type(msg) = "roSlideShowEvent" then
              if msg.isScreenClosed() then
 				'return the list that also contains the self posts
@@ -47,59 +64,24 @@ function showSlideShow(originalList,start, port)
 			 end if
 			 IF msg.isPlaybackPosition() THEN
 			 
-				row = msg.GetIndex()   'keeps the variable row supplied with the list index
-			    IF msg.GetIndex() = (list.count() -1) THEN
-					'load more reddit posts
-					s.Pause()
-					originalIndex = list.count() -1
-					after = list[list.count() -1].After
-					subReddit = list[list.count() -1].subReddit
-					newList = loadMorePosts(subReddit, after)
-					
-					'error checking
-					if(newList = invalid) 
-						print "Unable to get more posts, trying again"
-						'return originalList
-						if(originalIndex -2 > 0)
-							originalIndex =originalIndex -2
-							print "original index= " + originalIndex.tostr()
-						END IF
-						s.ClearContent()
-						s.SetContentList(list)
-						s.Show()
-						s.SetNext(0, true)
-						s.Resume()
-					else
-					
-					newListRemovedSelf = removeSelfPosts(newList)
-					
-					'make sure the new subreddits we found contained at least one image
-					if(newListRemovedSelf.count() > 1)
+					row = msg.GetIndex()   'keeps the variable row supplied with the list index
+					print "showing row= " + row.tostr()
+			
+
+						IF row = (activeListCount -1 ) THEN
+							'load more reddit posts
+							's.AddContent(newListRemovedSelf)
+							s.ClearContent()
+							s.SetContentList(list)
+							activeListCount = list.count()
+							s.Show()
+							s.SetNext(row, false)
+							print "Forcing the slideshow to row= " +row.tostr() 
+							print "but we have activelist=" + activeListCount.tostr()
 							
-						'list.Pop() 'pop sucks
-						'originalList.Pop() 'remove the last array entry because it contains the old After 
-						list = removeOldLoadMore(list)
-						originalList = removeOldLoadMore(originalList)
+						END IF
 					
-					else	
-						print "WARNING: Found no new posts count =" + newListRemovedSelf.count().tostr()
-					END IF
-					
-					'print "DUMPING newListRemovedSelf"
-					'dumpAssArray(newListRemovedSelf)
-					
-					list.Append(newListRemovedSelf)
-					
-					'add the new content to the list
-					s.ClearContent()
-					s.SetContentList(list)
-					s.Show()
-					s.SetNext(originalIndex, true)
 
-					s.Resume()
-
-					END IF
-				END IF
 			 END IF
 			 if msg.isButtonPressed() then
 				IF msg.GetIndex() = 1 THEN

@@ -47,9 +47,7 @@ FUNCTION loadMorePosts(subReddit,after)
 		print "subreddit or after are invalid"
 		return invalid
 	END IF
-	print "attempting to get the after= " + after
 	api_url = "http://www.reddit.com/r/" + subReddit + ".json?after=" + after
-	print api_url
 	json = fetch_JSON(api_url)
 	if(json = invalid)
 		return invalid
@@ -69,8 +67,7 @@ Function parseJsonPosts(json)
 	
 	for each post in json.data.children		
 				 IF(subReddit = "declared")
-					subReddit = post.data.subreddit
-					print "found a subreddit name=" +subReddit				
+					subReddit = post.data.subreddit			
 				 END IF
 				 
 				 url = fixImgur(post.data.url)
@@ -101,6 +98,7 @@ Function parseJsonPosts(json)
 					 o.ShortDescriptionLine2 = post.data.url
 					 o.Description = "Upvotes: " + ups + " - Downvotes: " + downs + "     " + post.data.url
 					 o.Rating = "NSFW"
+					 o.subReddit = post.data.subreddit
 					 o.ups = ups
 					 o.downs = downs
 					 o.id = post.data.id
@@ -132,10 +130,9 @@ Function parseJsonPosts(json)
 		more.After = json.data.after 
 		more.Title = "Load More"
 		
-		more.self=false 'the self post remover will remove it unless this is false
+		more.self=true 'the slideshow will update when it comes to this post
 		more.Url = "pkg:/images/loading.png" 'shows the loading screen
 		'get the subreddit from the json
-		print subReddit
 		more.SubReddit = subReddit		
 		tmpList.Push(more)
 		'return the new subreddit posts
@@ -187,7 +184,22 @@ function getSubreddits()
 END FUNCTION
 
 
-
+FUNCTION getTheAfter(list) 
+	for each post in list
+		if (post.DoesExist("after")=true) then 
+			after = post.after
+			if(post.after = invalid)
+				return invalid
+			END IF
+			return post.after
+			
+		END IF
+	end for
+	
+	print "couldnt find the after, getting it from the last item in the list"
+	return list[list.count() - 1].id
+	
+END FUNCTION
 
 
 Function isGood(url as string) as Boolean
@@ -226,8 +238,6 @@ Function isImg(url as string) As Boolean
 End Function
 
 Function fetch_JSON(url as string) as Object
-
-    print "fetching new JSON"
 
     xfer=createobject("roURLTransfer")
     xfer.seturl(url)
