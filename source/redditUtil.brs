@@ -60,10 +60,11 @@ END FUNCTION
 Function parseJsonPosts(json)
 	tmpList = CreateObject("roArray", 28, true)
 	subReddit = "declared"
-	'if(json.data.DoesExist("modhash")=true)
-	'	print "updating new modhash="+ json.data.modhash
-	'	setSetting("modhash", json.data.modhash)
-	'END IF
+	modhash = json["modhash"]
+	if(modhash <> invalid)
+		print "updating new modhash="+ modhash
+		setSetting("modhash", modhash)
+	END IF
 	
 	for each post in json.data.children		
 				 IF(subReddit = "declared")
@@ -103,9 +104,9 @@ Function parseJsonPosts(json)
 					 o.downs = downs
 					 o.id = post.data.id
 					 o.selftext = post.data.selftext
-					 o.StarRating = "100"
-					 o.ReleaseDate = "[<mm/dd/yyyy]"
-					 o.Length = 5400
+					' o.StarRating = "100"
+					' o.ReleaseDate = "[<mm/dd/yyyy]"
+					' o.Length = 5400
 					 o.minBandwidth = 20
 					 o.Actors = []
 					 o.Actors.Push("Posted by: "+ post.data.author)
@@ -185,6 +186,7 @@ END FUNCTION
 
 
 FUNCTION getTheAfter(list) 
+	after = "init"
 	for each post in list
 		if (post.DoesExist("after")=true) then 
 			after = post.after
@@ -196,8 +198,10 @@ FUNCTION getTheAfter(list)
 		END IF
 	end for
 	
-	print "couldnt find the after, getting it from the last item in the list"
-	return list[list.count() - 1].id
+	print "couldnt find the after returning invalid"
+	
+	'after = list[list.count() - 1].Lookup(id)
+	return invalid
 	
 END FUNCTION
 

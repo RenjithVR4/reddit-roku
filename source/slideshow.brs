@@ -16,11 +16,11 @@ function showSlideShow(originalList,start, port)
 	activeListCount = list.count()
     s = CreateObject("roSlideShow")
     s.SetMessagePort(port)
-	s.SetTextOverlayHoldTime(9000)   ' 1 second = 1000 milaseconds
+	s.SetTextOverlayHoldTime(5000)   ' 1 second = 1000 milaseconds
 	' s.SetTextOverlayIsVisible(true)
 	s.SetUnderscan(3) ' gives a padding around the image because TVs cut off the outer part of the image sometimes
 	' s.SetDisplayMode("photo-fit") 'I think default is best
-	s.SetPeriod(9) ' dont need this
+	s.SetPeriod(5) ' dont need this
 	
 	s.SetContentList(list)
     s.Show()
@@ -29,11 +29,15 @@ function showSlideShow(originalList,start, port)
 	msg = "declaring"
 	loading = false
 	row = invalid
+	addThesePosts = CreateObject("roArray", 28, true)
+	attemptMoreCount = 0
 	
 	while true
          
 		 
 		 		if(after <> invalid)
+						print "attempting to load more posts attempt = " + attemptMoreCount.tostr()
+						attemptMoreCount = attemptMoreCount +1
 						subReddit = list[0].subReddit
 						newList = loadMorePosts(subReddit, after)
 						after = getTheAfter(newList)	
@@ -43,8 +47,11 @@ function showSlideShow(originalList,start, port)
 						'make sure the new subreddits we found contained at least one image
 						if(newListRemovedSelf.count() > 1)
 							print "adding more posts count= " + newListRemovedSelf.count().tostr()
-							list.Append(newListRemovedSelf)	
+							list.Append(newListRemovedSelf)
+							addThesePosts.Append(newListRemovedSelf)
 						END IF
+				else
+					'print "after is invalid"
 				END IF
 		 
 		 msg = wait(0, port)
@@ -65,19 +72,23 @@ function showSlideShow(originalList,start, port)
 			 IF msg.isPlaybackPosition() THEN
 			 
 					row = msg.GetIndex()   'keeps the variable row supplied with the list index
-					print "showing row= " + row.tostr()
+					print  row.tostr() +"/" + (activeListCount-1).tostr() + " pending to add =" +addThesePosts.count().tostr() 
 			
 
-						IF row = (activeListCount -1 ) THEN
-							'load more reddit posts
-							's.AddContent(newListRemovedSelf)
-							s.ClearContent()
-							s.SetContentList(list)
-							activeListCount = list.count()
-							s.Show()
-							s.SetNext(row, false)
-							print "Forcing the slideshow to row= " +row.tostr() 
-							print "but we have activelist=" + activeListCount.tostr()
+						IF  addThesePosts.count() > 0 THEN
+							'add more posts to the slideshow
+							FOR EACH post IN addThesePosts
+								print "adding= " + post.Title
+								s.AddContent(post)
+								s.show()
+							END FOR
+							
+							activeListCount = activeListCount + addThesePosts.count()
+							's.SetNext(activeListCount -2, false)
+
+							print "REFRESHING SLIDESHOW adding new posts =  " + addThesePosts.count().tostr() 
+							'after we are done adding new posts clear the list containing new posts
+							addThesePosts.Clear()
 							
 						END IF
 					
