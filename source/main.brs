@@ -30,7 +30,10 @@ function loadMainGrid()
 		
 		list[j] = loadMorePosts(subReddit,"")
 		
-		
+		if(list[j] = invalid)
+			'build a failed to load icon for the grid
+			list[j] = buildErrorGrid()
+		END IF
         grid.SetContentList(j, list[j]) 
 	END IF
      end for 
@@ -51,7 +54,6 @@ function loadMainGrid()
                  print " col: ";msg.GetData()
 				 row = msg.GetIndex()
 				 col = msg.GetData()
-				 'selectedGrid = 
 				 
 				 IF (row=0 AND col=1) THEN
 					'show the login screen
@@ -62,11 +64,12 @@ function loadMainGrid()
 					END IF
 				 ELSE 
 				 
-				 list[msg.GetIndex()] = showSlideShow(list[msg.GetIndex()],msg.getData(), port)
+				 list[row] = showSlideShow(list[row],col, port)
+				 
 				 'populate any new reddit posts we got during the slideshow
-				 grid.SetContentList(msg.GetIndex(), list[msg.GetIndex()]) 
+				 grid.SetContentList(row, list[row]) 
 				 'send the user back to the original location in the grid
-				 grid.SetListOffset(msg.GetIndex(),msg.getData())
+				 grid.SetListOffset(row,col)
 				 END IF
 				 
              endif
@@ -75,53 +78,13 @@ function loadMainGrid()
 END FUNCTION
 
 
-function getSubreddits()
-'subReddits = CreateObject("roArray", 300, true)
-'subReddits.Push("settings")
-'subReddits.Push("aww")
-'return subReddits
-
-
-	if(isLoggedIn() = true)
-		blocked = getBlockedSubreddits()
-		subReddits = CreateObject("roArray", 300, true)
-		'always include these subreddits first
-		subReddits.Push("Settings")
-		subReddits.Push("funny")
-		subReddits.Push("pics")
-		http = NewHttp2("http://www.reddit.com/reddits/mine.json", "application/json")
-		response= http.GetToStringWithTimeout(90)
-		json = ParseJSON(response)
-		for each post in json.data.children	
-			found = false
-			'block the blocked subreddits
-			for i = 0 to blocked.Count() - 1 
-				name =  LCase(post.data.display_name)
-				if (name = blocked[i]) THEN
-					found = true
-				END IF
-			end for
-			if(found = false) THEN
-					subReddits.Push(name)
-			END IF
-		end for
-		
-		if(subReddits.Count() < 3)
-			subReddits = getDefaultSubreddits()
-		END IF
-		return subReddits
-	else
-		subReddits =getDefaultSubreddits()
-		return subReddits
-
-   END IF
-
+function buildErrorGrid()
+	tmpList = CreateObject("roArray", 2, true)
+	o = CreateObject("roAssociativeArray")
+	o.Title = "Error getting subreddit"
+	tmpList.Push(o)
+	return tmpList
 END FUNCTION
-
-
-
-
-
 
 
 Sub initTheme()

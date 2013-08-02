@@ -10,7 +10,9 @@ s.AddButton(7, "Hide Title Text Overlay")
 return s
 end function
 
-function showSlideShow(list,start, port)
+function showSlideShow(originalList,start, port)
+
+	list= removeSelfPosts(originalList)
     s = CreateObject("roSlideShow")
     s.SetMessagePort(port)
 	s.SetTextOverlayHoldTime(1000)   ' 1 second = 1000 milaseconds
@@ -19,7 +21,7 @@ function showSlideShow(list,start, port)
 	' s.SetDisplayMode("photo-fit") 'I think default is best
 	s.SetPeriod(1) ' dont need this
 	
-	s.SetContentList(removeSelfPosts(list))
+	s.SetContentList(list)
     s.Show()
 	s.SetNext(start, true)
 	
@@ -31,7 +33,8 @@ function showSlideShow(list,start, port)
          msg = wait(0, port)
          if type(msg) = "roSlideShowEvent" then
              if msg.isScreenClosed() then
-                 return list 'when the user closes the screen return any new reddit posts we downloaded
+				'return the list that also contains the self posts
+                 return originalList 'when the user closes the screen return any new reddit posts we downloaded
 			 end if
 			 if msg.isPaused() then
 				print "adding btns"
@@ -47,26 +50,61 @@ function showSlideShow(list,start, port)
 			    IF msg.GetIndex() = (list.count() -1) THEN
 					'load more reddit posts
 					s.Pause()
-
 					originalIndex = list.count() -1
 					after = list[list.count() -1].After
 					subReddit = list[list.count() -1].subReddit
 					newList = loadMorePosts(subReddit, after)
 					
-					'remove the last array entry because it contains the old After 					
-					list.Pop()
-					list.Append(newList)
-					print "done adding to the list"
+					'error checking
+					if(newList = invalid) 
+						print "Unable to get more posts, trying again"
+						'return originalList
+						if(originalIndex -2 > 0)
+							originalIndex =originalIndex -2
+							print "original index= " + originalIndex.tostr()
+						END IF
+						s.ClearContent()
+						s.SetContentList(list)
+						s.Show()
+						s.SetNext(0, true)
+						s.Resume()
+					else
+					
+					newListRemovedSelf = removeSelfPosts(newList)
+					
+					'make sure the new subreddits we found contained at least one image
+					if(newListRemovedSelf.count() > 1)
+							
+						'list.Pop() 'pop sucks
+						'originalList.Pop() 'remove the last array entry because it contains the old After 
+						list = removeOldLoadMore(list)
+						originalList = removeOldLoadMore(originalList)
+					
+					else	
+						print "WARNING: Found no new posts count =" + newListRemovedSelf.count().tostr()
+					END IF
+					
+					'make original list contain every post including the self posts
+					originalList.Append(newList)
+					
+					
+					
+									
+					
+					'print "DUMPING newListRemovedSelf"
+					'dumpAssArray(newListRemovedSelf)
+					
+					list.Append(newListRemovedSelf)
 					
 					'add the new content to the list
-					's.AddContent(newList)  'AddContent wont work because we have to remove the old "after", but we can .Pop() it then do reset the content to the new list
 					s.ClearContent()
 					s.SetContentList(list)
 					s.Show()
 					s.SetNext(originalIndex, true)
+
 					s.Resume()
 
-					
+					END IF
 				END IF
 			 END IF
 			 if msg.isButtonPressed() then
@@ -104,22 +142,31 @@ function showSlideShow(list,start, port)
 	
 End function
 
-FUNCTION loadMorePosts(subReddit as String, after as String)
-	print "attempting to get the after= " + after
-	api_url = "http://www.reddit.com/r/" + subReddit + ".json?after=" + after
-	json = fetch_JSON(api_url)
-	newList = parseJsonPosts(json)
-	return newList
+
+FUNCTION removeSelfPosts(list) as Object
+	tmpList = CreateObject("roArray", 122, true)
+
+	for each post in list
+		if (post.self=false) then
+			tmpList.Push(post)
+		END IF
+	end for
+	
+	return tmpList
 END FUNCTION
 
-FUNCTION removeSelfPosts(list)
-	i=0
-	'for i = 0 to list.Count() - 1
+
+FUNCTION removeOldLoadMore(list) as Object
+	tmpList = CreateObject("roArray", 122, true)
+
 	for each post in list
-		if (post.self=true) then
-			list.Delete(i)
+		if (post.DoesExist("after")=false) then
+			tmpList.Push(post)
+			'print("not the after")
+		else
+			'print "this the after"
 		END IF
-	i=i+1
 	end for
-	return list
+	
+	return tmpList
 END FUNCTION

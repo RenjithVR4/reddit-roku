@@ -1,9 +1,9 @@
 Function login()
 
-	'username = getUserInput("Login - Username", "Enter your Reddit username", "faketestuser")
-	'password = getUserInput("Login - Password", "Enter your Reddit password", "abc123")
-	username ="faketestuser"
-	password = "abc123"
+	username = getUserInput("Login - Username", "Enter your Reddit username", "faketestuser")
+	password = getUserInput("Login - Password", "Enter your Reddit password", "abc123")
+	'username ="faketestuser"
+	'password = "abc123"
 	
 	http = NewHttp2("http://www.reddit.com/api/login", "application/json") 'we want to use SSL encryption so we dont send a plaintext password 
 	'http = NewHttp2("https://ssl.reddit.com/api/login", "application/json")
@@ -99,5 +99,11 @@ END FUNCTION
 FUNCTION dumpArray(ary)
 	for j = 0 to ary.Count() - 1
 		print ary[j]
+	end for
+END FUNCTION
+
+FUNCTION dumpAssArray(list)
+	for each post in list
+		print "url="+post.Url
 	end for
 END FUNCTION

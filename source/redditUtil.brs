@@ -31,7 +31,7 @@ function getBlockedSubreddits()
     subReddits.Push("videos")
     subReddits.Push("gifs")
   '  subReddits.Push("IAmA")
-   ' subReddits.Push("treecomics")
+    subReddits.Push("bestof")
     subReddits.Push("news")
     subReddits.Push("blog")
    ' subReddits.Push("technology")
@@ -41,24 +41,41 @@ function getBlockedSubreddits()
    return subReddits
 END FUNCTION
 
+FUNCTION loadMorePosts(subReddit,after)
+
+	if(subReddit = invalid OR after = invalid)
+		return invalid
+	END IF
+	print "attempting to get the after= " + after
+	api_url = "http://www.reddit.com/r/" + subReddit + ".json?after=" + after
+	json = fetch_JSON(api_url)
+	if(json = invalid)
+		return invalid
+	END IF
+	newList = parseJsonPosts(json)
+	return newList
+END FUNCTION
+
+
 Function parseJsonPosts(json)
 	tmpList = CreateObject("roArray", 28, true)
 	subReddit = "declared"
-	if(json.data.DoesExist("modhash")=true)
-		print "updating new modhash="+ json.data.modhash
-		setSetting("modhash", json.data.modhash)
-	END IF
+	'if(json.data.DoesExist("modhash")=true)
+	'	print "updating new modhash="+ json.data.modhash
+	'	setSetting("modhash", json.data.modhash)
+	'END IF
 	
 	for each post in json.data.children		
 				 IF(subReddit = "declared")
 					subReddit = post.data.subreddit
+					print "found a subreddit name=" +subReddit				
 				 END IF
 				 
 				 url = fixImgur(post.data.url)
 				 self = post.data.is_self
 				 
 				 if((isGood(url) = false) AND (self = false))
-					 print "Its not an img!"			   
+					 'print "Its not an img!"			   
 				 else
 					 ups = post.data.ups.tostr()
 					 downs = post.data.downs.tostr()
@@ -67,7 +84,7 @@ Function parseJsonPosts(json)
 					 o.Title = post.data.title
 					 o.TextOverlayBody = post.data.title
 					 if(self=true)
-						 o.Url = ""
+						 o.Url = "pkg:/images/self.png" 
 						 o.SDPosterUrl = "pkg:/images/self.png" 
 						 o.HDPosterUrl = "pkg:/images/self.png" 
 						 o.self = true
@@ -108,10 +125,12 @@ Function parseJsonPosts(json)
 		end for
 		
 		'need to store the after variable we can load the next set of posts
+		
 		more = CreateObject("roAssociativeArray")		
 		more.After = json.data.after 
 		more.Title = "Load More"
-		more.self=true 'the self post remover will remove it unless this is true
+		
+		more.self=false 'the self post remover will remove it unless this is false
 		more.Url = "pkg:/images/loading.png" 'shows the loading screen
 		'get the subreddit from the json
 		print subReddit
@@ -120,6 +139,54 @@ Function parseJsonPosts(json)
 		'return the new subreddit posts
 		return tmpList
 END FUNCTION
+
+function getSubreddits()
+'subReddits = CreateObject("roArray", 300, true)
+'subReddits.Push("settings")
+'subReddits.Push("movies")
+'subReddits.Push("aww")
+'return subReddits
+
+
+	if(isLoggedIn() = true)
+		blocked = getBlockedSubreddits()
+		subReddits = CreateObject("roArray", 300, true)
+		'always include these subreddits first
+		subReddits.Push("Settings")
+		subReddits.Push("funny")
+		subReddits.Push("pics")
+		http = NewHttp2("http://www.reddit.com/reddits/mine.json", "application/json")
+		response= http.GetToStringWithTimeout(90)
+		json = ParseJSON(response)
+		for each post in json.data.children	
+			found = false
+			'block the blocked subreddits
+			for i = 0 to blocked.Count() - 1 
+				name =  LCase(post.data.display_name)
+				if (name = blocked[i]) THEN
+					found = true
+				END IF
+			end for
+			if(found = false) THEN
+					subReddits.Push(name)
+			END IF
+		end for
+		
+		if(subReddits.Count() < 3)
+			subReddits = getDefaultSubreddits()
+		END IF
+		return subReddits
+	else
+		subReddits =getDefaultSubreddits()
+		return subReddits
+
+   END IF
+
+END FUNCTION
+
+
+
+
 
 Function isGood(url as string) as Boolean
 	if(isImg(url) = false OR isGallery(url) = false OR isGif(url) = false)
@@ -163,6 +230,9 @@ Function fetch_JSON(url as string) as Object
     xfer=createobject("roURLTransfer")
     xfer.seturl(url)
     data=xfer.gettostring()
+	if(data = "")
+		return invalid
+	END IF
     json = ParseJSON(data)
 
     return json
