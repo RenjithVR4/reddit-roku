@@ -7,14 +7,22 @@ End Function
 
 function loadMainGrid()
 	port=CreateObject("roMessagePort")
-    grid = CreateObject("roGridScreen")
+
+	subReddits = getSubreddits()
+	countSubreddits = subReddits.Count()
+	'port = CreateObject("roMessagePort") 
+	dialog = CreateObject( "roOneLineDialog" )
+	dialog.SetMessagePort(port)
+	dialog.ShowBusyAnimation() 
+	dialog.SetTitle( "Loading subreddits: 0/" +countSubreddits.tostr()  )
+	dialog.Show()
+	
+	grid = CreateObject("roGridScreen")
     grid.SetMessagePort(port)
     grid.SetDisplayMode("scale-to-fit")
     grid.SetGridStyle("Flat-Square")
 
-	subReddits = getSubreddits()
-
-    grid.SetupLists(subReddits.Count())
+    grid.SetupLists(countSubreddits)
     grid.SetListNames(subReddits) 
 	list = CreateObject("roArray", 300, true)
 	
@@ -32,10 +40,15 @@ function loadMainGrid()
 			'build a failed to load icon for the grid
 			list[j] = buildErrorGrid()
 		END IF
+		
+		dialog.SetTitle( "Loading subreddits: "+j.tostr()+"/" +countSubreddits.tostr()  )
+		dialog.Show()
+		
         grid.SetContentList(j, list[j]) 
 	END IF
      end for 
 	 
+	 dialog.Close()
 	 grid.SetFocusedListItem(2,0)
      grid.Show() 
 	 
@@ -98,35 +111,59 @@ End Sub
 Function CreateDefaultTheme() as Object
     theme = CreateObject("roAssociativeArray")
 
-    theme.ThemeType = "generic-white"
+    'theme.ThemeType = "generic-dark"
+	
+	black = "#000000"
+	white = "#ffffff"
+	hdLogo = "pkg:/images/reddit-logo-hd.png"
+	sdLogo = "pkg:/images/reddit-logo-sd.png"
+	
+	theme.BackgroundColor = white
+	theme.ParagraphBodyText = black
+	
+	theme.OverhangSliceHD = "pkg:/images/clear.png"
+	theme.OverhangSliceSD = "pkg:/images/clear.png"
+    theme.GridScreenBackgroundColor = white
+    theme.GridScreenMessageColor    = black
+    theme.GridScreenRetrievingColor = black
+    theme.GridScreenListNameColor   = black
+	
+	'one msg dialog
+	theme.ButtonMenuNormalOverlayText =black
+	theme.ButtonMenuNormalText = black
+	theme.ButtonNormalColor = white
+	theme.DialogBodyText = black
+	theme.ButtonHighlightColor = white
+	theme.DialogTitleText = black
 
-    ' All these are greyscales
-    theme.GridScreenBackgroundColor = "#ffffff"
-    theme.GridScreenMessageColor    = "#000000"
-    theme.GridScreenRetrievingColor = "#000000"
-    theme.GridScreenListNameColor   = "#000000"
 
     ' Color values work here
-    theme.GridScreenDescriptionTitleColor    = "#000000"
+    theme.GridScreenDescriptionTitleColor    = black
     theme.GridScreenDescriptionDateColor     = "#FF005B"
     theme.GridScreenDescriptionRuntimeColor  = "#5B005B"
     theme.GridScreenDescriptionSynopsisColor = "#606000"
     
     'used in the Grid Screen
-    theme.CounterTextLeft           = "#000000"
-    theme.CounterSeparator          = "#000000"
-    theme.CounterTextRight          = "#000000"
+    theme.CounterTextLeft           = black
+    theme.CounterSeparator          = black
+    theme.CounterTextRight          = black
 	
-	theme.GridScreenLogoHD          = "pkg:/images/reddit-logo-hd.png"
+	theme.GridScreenLogoHD          = hdLogo
+	theme.OverhangPrimaryLogoHD     = sdLogo
+    theme.GridScreenLogoOffsetHD_X  = "220"
+    theme.GridScreenLogoOffsetHD_Y  = "25"
+    theme.GridScreenOverhangHeightHD = "205"
 	
-    theme.GridScreenLogoOffsetHD_X  = "35"
-    theme.GridScreenLogoOffsetHD_Y  = "23"
-    theme.GridScreenOverhangHeightHD = "124"
+	theme.OverhangPrimaryLogoOffsetHD_X = "220"
+	theme.OverhangPrimaryLogoOffsetHD_Y = "20"
 
-    theme.GridScreenLogoSD          = "pkg:/images/reddit-logo-sd.png"
-    theme.GridScreenOverhangHeightSD = "81"
-    theme.GridScreenLogoOffsetSD_X  = "30"
-    theme.GridScreenLogoOffsetSD_Y  = "15"
+
+	
+    theme.GridScreenLogoSD          = sdLogo
+	theme.OverhangPrimaryLogoSD     = sdLogo
+    theme.GridScreenLogoOffsetSD_X  = "160"
+    theme.GridScreenLogoOffsetSD_Y  = "18"
+	theme.GridScreenOverhangHeightSD = "100"
     
     ' to use your own focus ring artwork 
     'theme.GridScreenFocusBorderSD        = "pkg:/images/GridCenter_Border_Movies_SD43.png"
