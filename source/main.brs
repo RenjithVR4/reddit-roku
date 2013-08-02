@@ -16,9 +16,7 @@ function loadMainGrid()
 
     grid.SetupLists(subReddits.Count())
     grid.SetListNames(subReddits) 
-	list = CreateObject("roArray", 30, true)
-	
-
+	list = CreateObject("roArray", 300, true)
 	
     for j = 0 to subReddits.Count() - 1
 	if (j=0) then

@@ -44,10 +44,12 @@ END FUNCTION
 FUNCTION loadMorePosts(subReddit,after)
 
 	if(subReddit = invalid OR after = invalid)
+		print "subreddit or after are invalid"
 		return invalid
 	END IF
 	print "attempting to get the after= " + after
 	api_url = "http://www.reddit.com/r/" + subReddit + ".json?after=" + after
+	print api_url
 	json = fetch_JSON(api_url)
 	if(json = invalid)
 		return invalid

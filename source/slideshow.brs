@@ -34,6 +34,7 @@ function showSlideShow(originalList,start, port)
          if type(msg) = "roSlideShowEvent" then
              if msg.isScreenClosed() then
 				'return the list that also contains the self posts
+				originalList.Append(list)
                  return originalList 'when the user closes the screen return any new reddit posts we downloaded
 			 end if
 			 if msg.isPaused() then
@@ -83,13 +84,6 @@ function showSlideShow(originalList,start, port)
 					else	
 						print "WARNING: Found no new posts count =" + newListRemovedSelf.count().tostr()
 					END IF
-					
-					'make original list contain every post including the self posts
-					originalList.Append(newList)
-					
-					
-					
-									
 					
 					'print "DUMPING newListRemovedSelf"
 					'dumpAssArray(newListRemovedSelf)
