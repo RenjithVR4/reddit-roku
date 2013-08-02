@@ -48,7 +48,9 @@ FUNCTION loadMorePosts(subReddit,after)
 		return invalid
 	END IF
 	api_url = "http://www.reddit.com/r/" + subReddit + ".json?after=" + after
-	json = fetch_JSON(api_url)
+	http = NewHttp2(api_url, "application/json")
+	response= http.GetToStringWithTimeout(90)
+	json = ParseJSON(response)
 	if(json = invalid)
 		return invalid
 	END IF
@@ -59,15 +61,17 @@ END FUNCTION
 
 Function parseJsonPosts(json)
 	tmpList = CreateObject("roArray", 28, true)
-	subReddit = "declared"
-	modhash = json["modhash"]
+	subReddit = "notdeclared"
+	modhash = json.data.modhash
 	if(modhash <> invalid)
 		print "updating new modhash="+ modhash
 		setSetting("modhash", modhash)
+	else
+	print "modhash is invalid"
 	END IF
 	
 	for each post in json.data.children		
-				 IF(subReddit = "declared")
+				 IF(subReddit = "notdeclared")
 					subReddit = post.data.subreddit			
 				 END IF
 				 
@@ -184,6 +188,11 @@ function getSubreddits()
 
 END FUNCTION
 
+
+
+FUNCTION savePost(id as String)
+
+END FUNCTION
 
 FUNCTION getTheAfter(list) 
 	after = "init"

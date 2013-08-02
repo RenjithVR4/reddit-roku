@@ -11,7 +11,7 @@ Function login()
 	http.AddParam("user", username)
 	http.AddParam("passwd", password)
 	http.AddParam("api_type", "json")
-	http.AddParam("rem", "false")
+	http.AddParam("rem", "true")
 	response= http.PostFromStringWithTimeout("", 90)
 	print "resp[0]= " + response[0]
 	json = ParseJSON(response[0])

@@ -78,7 +78,6 @@ function showSlideShow(originalList,start, port)
 						IF  addThesePosts.count() > 0 THEN
 							'add more posts to the slideshow
 							FOR EACH post IN addThesePosts
-								print "adding= " + post.Title
 								s.AddContent(post)
 								s.show()
 							END FOR
@@ -111,7 +110,8 @@ function showSlideShow(originalList,start, port)
 					showComments(list[row])
 				END IF
 				IF msg.GetIndex() = 5 THEN
-					print "save post"
+					print "save post: " + list[row].Title
+					savePost(list[row].id)
 				END IF
 				IF msg.GetIndex() = 6 THEN
 					print "view full img"

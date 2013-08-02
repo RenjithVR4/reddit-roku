@@ -155,7 +155,7 @@ Function CreateDefaultTheme() as Object
     theme.GridScreenOverhangHeightHD = "205"
 	
 	theme.OverhangPrimaryLogoOffsetHD_X = "220"
-	theme.OverhangPrimaryLogoOffsetHD_Y = "20"
+	theme.OverhangPrimaryLogoOffsetHD_Y = "15"
 
 
 	
