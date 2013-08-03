@@ -5,11 +5,11 @@ s.AddButton(2, "Upvote")
 s.AddButton(3, "Downvote") 
 s.AddButton(4, "View Comments") 
 s.AddButton(5, "Save Post") 
-s.AddButton(9, "View Full Img(Beta)") 
+s.AddButton(9, "View Full") 
 return s
 end function
 
-function showSlideShow(originalList,start, port)
+function showSlideShow(originalList,startId, port)
 	after = getTheAfter(originalList)	
 	list= removeSelfPosts(originalList)
 	activeListCount = list.count()
@@ -23,7 +23,8 @@ function showSlideShow(originalList,start, port)
 	
 	s.SetContentList(list)
     s.Show()
-	s.SetNext(start, true)
+	startIndex = findStartIndex(list, startId)
+	s.SetNext(startIndex, true)
 	
 	msg = "declaring"
 	loading = false
@@ -117,34 +118,35 @@ function showSlideShow(originalList,start, port)
 					paused = false
 				END IF
 				
+				if(isLoggedIn() = false) THEN
+				'show need to login msg
+					showMessage("Please login first")
+				ELSE IF msg.GetIndex() = 2 THEN			
 				'UPVOTE
-				IF msg.GetIndex() = 2 THEN
 					print "User hit upvote btn"
-					vote(list[row].id, "1")
+					vote(list[row].name, "1")
+					s.ClearButtons()
+					paused = false			
+				'DOWNVOTE
+				ELSE IF msg.GetIndex() = 3 THEN
+					print "User hit downvote btn"
+					vote(list[row].name, "-1")
+					s.ClearButtons()
+					paused = false
+				ELSE IF msg.GetIndex() = 5 THEN
+				'SAVE POST
+					print "save post: " + list[row].Title
+					savePost(list[row].name)
 					s.ClearButtons()
 					paused = false
 				END IF
 				
-				'DOWNVOTE
-				IF msg.GetIndex() = 3 THEN
-					print "User hit downvote btn"
-					vote(list[row].id, "-1")
-					s.ClearButtons()
-					paused = false
-
-				END IF
 				IF msg.GetIndex() = 4 THEN
 					print "view comments"
 					showComments(list[row])
 				END IF
 				
-				'SAVE POST
-				IF msg.GetIndex() = 5 THEN
-					print "save post: " + list[row].Title
-					savePost(list[row].id)
-					s.ClearButtons()
-					paused = false
-				END IF
+			
 				IF msg.GetIndex() = 9 THEN
 					print "view full img"
 					showImg(list[row].Url) 
@@ -185,3 +187,17 @@ FUNCTION removeOldLoadMore(list) as Object
 	
 	return tmpList
 END FUNCTION
+
+'pass in the list and the start ID and find the index the ID has
+FUNCTION findStartIndex(list, id)
+	for i = 0 to list.Count() - 1
+		if(list[i].id=id)
+			return i
+		end if
+	end for
+	
+	print "COULDNT FIND START INDEX"
+	return 0
+END FUNCTION
+
+

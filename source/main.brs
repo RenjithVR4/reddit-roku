@@ -70,6 +70,7 @@ function loadMainGrid()
 				 row = msg.GetIndex()
 				 col = msg.GetData()
 				 
+				 'login or logout
 				 IF (row=0 AND col=1) THEN
 					'show the login screen
 					if(isLoggedIn() = true) THEN
@@ -79,7 +80,13 @@ function loadMainGrid()
 					END IF
 				 ELSE 
 				 
-				 list[row] = showSlideShow(list[row],col,port)
+				 'for images show a slideshow
+				 if(list[row][col].self = false )
+					list[row] = showSlideShow(list[row],list[row][col].id,port)
+				 ELSE
+					'for self posts show the comments page
+					showComments(list[row][col])
+				 END IF
 				 
 				 'populate any new reddit posts we got during the slideshow
 				 grid.SetContentList(row, list[row]) 

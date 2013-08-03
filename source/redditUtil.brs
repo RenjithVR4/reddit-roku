@@ -93,12 +93,18 @@ Function parseJsonPosts(json)
 						 o.SDPosterUrl = "pkg:/images/self.png" 
 						 o.HDPosterUrl = "pkg:/images/self.png" 
 						 o.self = true
+						 o.selftext = post.data.selftext
 					 else
 						 o.Url = url
 						 o.SDPosterUrl = post.data.thumbnail
 						 o.HDPosterUrl = post.data.thumbnail
 						 o.self=false
 					 END IF
+					 
+					' if(post.data.over_18 = "true")
+						' o.SDPosterUrl = "pkg:/images/nsfw.png" 
+						' o.HDPosterUrl = "pkg:/images/nsfw.png" 					 
+					' END IF
 
 					 o.ShortDescriptionLine1 = "Upvotes: " + ups + " - Downvotes: " + downs
 					 o.ShortDescriptionLine2 = post.data.url
@@ -107,7 +113,8 @@ Function parseJsonPosts(json)
 					 o.subReddit = post.data.subreddit
 					 o.ups = ups
 					 o.downs = downs
-					 o.id = post.data.name 'use .name instead of .id because .name contains the t3_ prefix
+					 o.name = post.data.name '.name contains the t3_ prefix
+					 o.id = post.data.id 
 					 o.selftext = post.data.selftext
 					' o.StarRating = "100"
 					' o.ReleaseDate = "[<mm/dd/yyyy]"

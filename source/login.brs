@@ -104,6 +104,6 @@ END FUNCTION
 
 FUNCTION dumpAssArray(list)
 	for each post in list
-		print "url="+post.Url
+		print "body="+post.body
 	end for
 END FUNCTION
