@@ -10,12 +10,7 @@ function loadMainGrid()
 
 	subReddits = getSubreddits()
 	countSubreddits = subReddits.Count()
-	'port = CreateObject("roMessagePort") 
-	dialog = CreateObject( "roOneLineDialog" )
-	dialog.SetMessagePort(port)
-	dialog.ShowBusyAnimation() 
-	dialog.SetTitle( "Loading subreddits: 0/" +countSubreddits.tostr()  )
-	dialog.Show()
+	
 	
 	grid = CreateObject("roGridScreen")
     grid.SetMessagePort(port)
@@ -24,6 +19,14 @@ function loadMainGrid()
 
     grid.SetupLists(countSubreddits)
     grid.SetListNames(subReddits) 
+	
+	dialog = CreateObject( "roOneLineDialog" )
+	dialog.SetMessagePort(port)
+	dialog.ShowBusyAnimation() 
+	dialog.SetTitle( "Loading subreddits: 0/" +countSubreddits.tostr()  )
+	dialog.Show()
+	
+
 	list = CreateObject("roArray", 300, true)
 	
     for j = 0 to subReddits.Count() - 1
@@ -48,7 +51,7 @@ function loadMainGrid()
 	END IF
      end for 
 	 
-	 dialog.Close()
+	' dialog.Close() ' why does the app close when I close the dialog?
 	 grid.SetFocusedListItem(2,0)
      grid.Show() 
 	 

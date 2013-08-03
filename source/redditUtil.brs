@@ -64,7 +64,7 @@ Function parseJsonPosts(json)
 	subReddit = "notdeclared"
 	modhash = json.data.modhash
 	if(modhash <> invalid)
-		print "updating new modhash="+ modhash
+		'print "updating new modhash="+ modhash
 		setSetting("modhash", modhash)
 	else
 	print "modhash is invalid"
@@ -191,7 +191,16 @@ END FUNCTION
 
 
 FUNCTION savePost(id as String)
-
+	print "saving post id=" +id
+	modhash = getSetting("modhash")
+	http = NewHttp2("http://www.reddit.com/api/save", "application/json") 
+	http.AddParam("id", id)
+	http.AddParam("uh", modhash)
+	response= http.PostFromStringWithTimeout("", 90)
+	print response
+	dumpArray(response[1])
+	json = ParseJSON(response[1])
+	print dumpArray(json)
 END FUNCTION
 
 FUNCTION getTheAfter(list) 
