@@ -209,7 +209,6 @@ END FUNCTION
 'dir is the vote value either 1, or -1
 'Upvote or downvote a "thing" on Reddit
 FUNCTION vote(id as String, dir as String)
-	print "saving post id=" +id
 	modhash = getSetting("modhash")
 	http = NewHttp2("http://www.reddit.com/api/vote", "application/json") 
 	http.AddParam("id", id)

@@ -5,8 +5,7 @@ s.AddButton(2, "Upvote")
 s.AddButton(3, "Downvote") 
 s.AddButton(4, "View Comments") 
 s.AddButton(5, "Save Post") 
-s.AddButton(6, "View Full Img(Beta)") 
-s.AddButton(7, "Hide Title Text Overlay") 
+s.AddButton(9, "View Full Img(Beta)") 
 return s
 end function
 
@@ -36,9 +35,17 @@ function showSlideShow(originalList,start, port)
 	while true
          msg = wait(0, port)
 		 if type(msg) = "roSlideShowEvent" then
-		  if msg.isRemoteKeyPressed() then
-			print "a remote key was pressed"
+		   if msg.isRemoteKeyPressed() then
+		   
+					'show the button menu to interact with reddit post
+			  if(msg.getIndex()=6)
+			     print "adding btns"
+				 paused = true
+                 s= addButtons(s)
+			  END IF
 		  END IF
+		
+
 		    if msg.isRequestSucceeded() then
 		 		if((after <> invalid) AND (paused = false) )
 						print "attempting to load more posts attempt = " + attemptMoreCount.tostr()
@@ -94,20 +101,6 @@ function showSlideShow(originalList,start, port)
 
 			 END IF
 			 
-			 if msg.isPaused() then
-				print "adding btns"
-				paused = true
-               ' s= addButtons(s)
-s.AddButton(1, "Resume") 
-s.AddButton(2, "Upvote") 
-s.AddButton(3, "Downvote") 
-s.AddButton(4, "View Comments") 
-s.AddButton(5, "Save Post") 
-s.AddButton(6, "View Full Img(Beta)") 
-s.AddButton(7, "Hide Title Text Overlay") 
-
-			 end if
-			 
 			 if msg.isResumed() then
 				print "removing btns"
                 s.ClearButtons()
@@ -119,22 +112,25 @@ s.AddButton(7, "Hide Title Text Overlay")
 			 'RESUME
 				IF msg.GetIndex() = 1 THEN
 					print "User hit resume"
-					's.ClearButtons()
-					's.Resume()
-					'paused = false
+					s.ClearButtons()
+					s.Resume()
+					paused = false
 				END IF
 				
 				'UPVOTE
 				IF msg.GetIndex() = 2 THEN
 					print "User hit upvote btn"
 					vote(list[row].id, "1")
-
+					s.ClearButtons()
+					paused = false
 				END IF
 				
 				'DOWNVOTE
 				IF msg.GetIndex() = 3 THEN
 					print "User hit downvote btn"
 					vote(list[row].id, "-1")
+					s.ClearButtons()
+					paused = false
 
 				END IF
 				IF msg.GetIndex() = 4 THEN
@@ -146,20 +142,14 @@ s.AddButton(7, "Hide Title Text Overlay")
 				IF msg.GetIndex() = 5 THEN
 					print "save post: " + list[row].Title
 					savePost(list[row].id)
-					's.ClearButtons()
-					's.Resume()
-					'paused = false
-				END IF
-				IF msg.GetIndex() = 6 THEN
-					print "view full img"
-				END IF
-				IF msg.GetIndex() = 7 THEN
-					print "hide text overlay"
-					paused = false
-					s.SetTextOverlayIsVisible(false)
 					s.ClearButtons()
-					s.Resume()
+					paused = false
 				END IF
+				IF msg.GetIndex() = 9 THEN
+					print "view full img"
+					showImg(list[row].Url) 
+				END IF
+				
 				end if
 			 
 		 end if

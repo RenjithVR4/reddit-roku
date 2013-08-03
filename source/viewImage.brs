@@ -21,7 +21,8 @@ Function showImg(url)
 		  
     if bigbm = invalid
         print "bigbm create failed"
-        showSlideShow(url, m.port)   'not sure why we cant always create a roBitmap, but when it fails use roSlideshow
+        showMessage("Unable to load image")
+		return invalid
     else
 	
 	ScreenWidth = screen.getwidth()
@@ -41,7 +42,8 @@ Function showImg(url)
 	
     if backgroundRegion = invalid
         print "create region failed"
-        stop
+        showMessage("Unable to load image")
+		return invalid
     endif
     backgroundRegion.SetWrap(true)
 

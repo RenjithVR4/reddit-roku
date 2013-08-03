@@ -51,9 +51,10 @@ function loadMainGrid()
 	END IF
      end for 
 	 
-	' dialog.Close() ' why does the app close when I close the dialog?
+	
 	 grid.SetFocusedListItem(2,0)
      grid.Show() 
+	 dialog.Close() ' why does the app close when I close the dialog?
 	 
     while true
          msg = wait(0, port)
@@ -78,7 +79,7 @@ function loadMainGrid()
 					END IF
 				 ELSE 
 				 
-				 list[row] = showSlideShow(list[row],col, port)
+				 list[row] = showSlideShow(list[row],col,port)
 				 
 				 'populate any new reddit posts we got during the slideshow
 				 grid.SetContentList(row, list[row]) 
@@ -191,7 +192,7 @@ Function showMessage(msg As String)
 	dialog.SetMessagePort(port)
 	dialog.SetTitle( msg )
 	dialog.Show()
-	sleep(4000)
+	sleep(3200)
 	return -1
 END FUNCTION 
 
