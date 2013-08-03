@@ -153,11 +153,11 @@ Function parseJsonPosts(json)
 END FUNCTION
 
 function getSubreddits()
-'subReddits = CreateObject("roArray", 300, true)
-'subReddits.Push("settings")
-'subReddits.Push("movies")
-'subReddits.Push("aww")
-'return subReddits
+subReddits = CreateObject("roArray", 300, true)
+subReddits.Push("settings")
+subReddits.Push("askreddit")
+subReddits.Push("aww")
+return subReddits
 
 
 	if(isLoggedIn() = true)
