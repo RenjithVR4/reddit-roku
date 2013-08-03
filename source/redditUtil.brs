@@ -87,6 +87,7 @@ Function parseJsonPosts(json)
 					 o.ContentType = "episode"
 					 o.Title = post.data.title
 					 o.TextOverlayBody = post.data.title
+					 
 					 if(self=true)
 						 o.Url = "pkg:/images/self.png" 
 						 o.SDPosterUrl = "pkg:/images/self.png" 
@@ -106,7 +107,7 @@ Function parseJsonPosts(json)
 					 o.subReddit = post.data.subreddit
 					 o.ups = ups
 					 o.downs = downs
-					 o.id = post.data.id
+					 o.id = post.data.name 'use .name instead of .id because .name contains the t3_ prefix
 					 o.selftext = post.data.selftext
 					' o.StarRating = "100"
 					' o.ReleaseDate = "[<mm/dd/yyyy]"
@@ -197,10 +198,29 @@ FUNCTION savePost(id as String)
 	http.AddParam("id", id)
 	http.AddParam("uh", modhash)
 	response= http.PostFromStringWithTimeout("", 90)
-	print response
-	dumpArray(response[1])
-	json = ParseJSON(response[1])
-	print dumpArray(json)
+	'print response
+	'dumpArray(response[1])
+	'json = ParseJSON(response[1])
+	'print dumpArray(json)
+	return 0
+END FUNCTION
+
+
+'dir is the vote value either 1, or -1
+'Upvote or downvote a "thing" on Reddit
+FUNCTION vote(id as String, dir as String)
+	print "saving post id=" +id
+	modhash = getSetting("modhash")
+	http = NewHttp2("http://www.reddit.com/api/vote", "application/json") 
+	http.AddParam("id", id)
+	http.AddParam("dir", dir)
+	http.AddParam("uh", modhash)
+	response= http.PostFromStringWithTimeout("", 90)
+	'print response
+	'dumpArray(response[1])
+	'json = ParseJSON(response[1])
+	'print dumpArray(json)
+	return 0
 END FUNCTION
 
 FUNCTION getTheAfter(list) 

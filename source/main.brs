@@ -155,7 +155,7 @@ Function CreateDefaultTheme() as Object
 	theme.OverhangPrimaryLogoHD     = sdLogo
     theme.GridScreenLogoOffsetHD_X  = "220"
     theme.GridScreenLogoOffsetHD_Y  = "25"
-    theme.GridScreenOverhangHeightHD = "205"
+    theme.GridScreenOverhangHeightHD = "145"
 	
 	theme.OverhangPrimaryLogoOffsetHD_X = "220"
 	theme.OverhangPrimaryLogoOffsetHD_Y = "15"

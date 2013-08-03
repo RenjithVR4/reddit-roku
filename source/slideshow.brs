@@ -1,5 +1,5 @@
 
-function addButtons(s) as Object
+function addButtons(s)
 s.AddButton(1, "Resume") 
 s.AddButton(2, "Upvote") 
 s.AddButton(3, "Downvote") 
@@ -31,11 +31,16 @@ function showSlideShow(originalList,start, port)
 	row = invalid
 	addThesePosts = CreateObject("roArray", 28, true)
 	attemptMoreCount = 0
+	paused = false
 	
 	while true
-         
-		 
-		 		if(after <> invalid)
+         msg = wait(0, port)
+		 if type(msg) = "roSlideShowEvent" then
+		  if msg.isRemoteKeyPressed() then
+			print "a remote key was pressed"
+		  END IF
+		    if msg.isRequestSucceeded() then
+		 		if((after <> invalid) AND (paused = false) )
 						print "attempting to load more posts attempt = " + attemptMoreCount.tostr()
 						attemptMoreCount = attemptMoreCount +1
 						subReddit = list[0].subReddit
@@ -53,29 +58,24 @@ function showSlideShow(originalList,start, port)
 				else
 					'print "after is invalid"
 				END IF
+		    END IF
 		 
-		 msg = wait(0, port)
-         if type(msg) = "roSlideShowEvent" then
+		 
+		 'EXIT slideshow
+
              if msg.isScreenClosed() then
 				'return the list that also contains the self posts
-				originalList.Append(list)
+				 originalList.Append(list)
                  return originalList 'when the user closes the screen return any new reddit posts we downloaded
 			 end if
-			 if msg.isPaused() then
-				print "adding btns"
-                 s = addButtons(s)
-			 end if
-			 if msg.isResumed() then
-				print "removing btns"
-                 s.ClearButtons()
-			 end if
+
 			 IF msg.isPlaybackPosition() THEN
 			 
 					row = msg.GetIndex()   'keeps the variable row supplied with the list index
 					print  row.tostr() +"/" + (activeListCount-1).tostr() + " pending to add =" +addThesePosts.count().tostr() 
 			
 
-						IF  addThesePosts.count() > 0 THEN
+						IF  (addThesePosts.count() > 0) AND (paused = false) THEN
 							'add more posts to the slideshow
 							FOR EACH post IN addThesePosts
 								s.AddContent(post)
@@ -93,31 +93,69 @@ function showSlideShow(originalList,start, port)
 					
 
 			 END IF
+			 
+			 if msg.isPaused() then
+				print "adding btns"
+				paused = true
+               ' s= addButtons(s)
+s.AddButton(1, "Resume") 
+s.AddButton(2, "Upvote") 
+s.AddButton(3, "Downvote") 
+s.AddButton(4, "View Comments") 
+s.AddButton(5, "Save Post") 
+s.AddButton(6, "View Full Img(Beta)") 
+s.AddButton(7, "Hide Title Text Overlay") 
+
+			 end if
+			 
+			 if msg.isResumed() then
+				print "removing btns"
+                s.ClearButtons()
+				paused = false
+			 end if
+			 
 			 if msg.isButtonPressed() then
+			 
+			 'RESUME
 				IF msg.GetIndex() = 1 THEN
 					print "User hit resume"
-					s.ClearButtons()
-					s.Resume()
+					's.ClearButtons()
+					's.Resume()
+					'paused = false
 				END IF
+				
+				'UPVOTE
 				IF msg.GetIndex() = 2 THEN
 					print "User hit upvote btn"
+					vote(list[row].id, "1")
+
 				END IF
+				
+				'DOWNVOTE
 				IF msg.GetIndex() = 3 THEN
 					print "User hit downvote btn"
+					vote(list[row].id, "-1")
+
 				END IF
 				IF msg.GetIndex() = 4 THEN
 					print "view comments"
 					showComments(list[row])
 				END IF
+				
+				'SAVE POST
 				IF msg.GetIndex() = 5 THEN
 					print "save post: " + list[row].Title
 					savePost(list[row].id)
+					's.ClearButtons()
+					's.Resume()
+					'paused = false
 				END IF
 				IF msg.GetIndex() = 6 THEN
 					print "view full img"
 				END IF
 				IF msg.GetIndex() = 7 THEN
 					print "hide text overlay"
+					paused = false
 					s.SetTextOverlayIsVisible(false)
 					s.ClearButtons()
 					s.Resume()
