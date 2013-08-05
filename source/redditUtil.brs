@@ -70,6 +70,7 @@ Function parseJsonPosts(json)
 	print "modhash is invalid"
 	END IF
 	
+	count = 0
 	for each post in json.data.children		
 				 IF(subReddit = "notdeclared")
 					subReddit = post.data.subreddit			
@@ -94,6 +95,9 @@ Function parseJsonPosts(json)
 						 o.HDPosterUrl = "pkg:/images/self.png" 
 						 o.self = true
 						 o.selftext = post.data.selftext
+					 else if(post.data.thumbnail = "")
+						 o.SDPosterUrl = "pkg:/images/nsfw.png" 
+						 o.HDPosterUrl = "pkg:/images/nsfw.png" 					 
 					 else
 						 o.Url = url
 						 o.SDPosterUrl = post.data.thumbnail
@@ -101,10 +105,7 @@ Function parseJsonPosts(json)
 						 o.self=false
 					 END IF
 					 
-					' if(post.data.over_18 = "true")
-						' o.SDPosterUrl = "pkg:/images/nsfw.png" 
-						' o.HDPosterUrl = "pkg:/images/nsfw.png" 					 
-					' END IF
+					 
 
 					 o.ShortDescriptionLine1 = "Upvotes: " + ups + " - Downvotes: " + downs
 					 o.ShortDescriptionLine2 = post.data.url
@@ -133,31 +134,40 @@ Function parseJsonPosts(json)
 									VAlign:"VCenter", 
 									Direction:"LeftToRight" 
 									}
+					 count = count+1
 					 tmpList.Push(o)
 				 endif
 		end for
 		
 		'need to store the after variable we can load the next set of posts
-		
-		more = CreateObject("roAssociativeArray")		
-		more.After = json.data.after 
-		more.Title = "Load More"
-		
-		more.self=true 'the slideshow will update when it comes to this post
-		more.Url = "pkg:/images/loading.png" 'shows the loading screen
-		'get the subreddit from the json
-		more.SubReddit = subReddit		
+		more = generateLoadMorePost(json.data.after, subreddit,count)
 		tmpList.Push(more)
 		'return the new subreddit posts
 		return tmpList
 END FUNCTION
 
+FUNCTION generateLoadMorePost(after,subreddit,count)
+		more = CreateObject("roAssociativeArray")		
+		more.After = after 
+		if(count > 0)
+			more.Title = "Load More"
+		else
+			more.Title = "Couldn't find any pictures or self posts, click here to try again"
+		END IF
+		more.name = "loadmore"
+		more.self=true 'the slideshow will update when it comes to this post
+		more.Url = "pkg:/images/loading.png" 'shows the loading screen
+		'get the subreddit from the json
+		more.SubReddit = subReddit	
+		return more
+END FUNCTION
+
 function getSubreddits()
-subReddits = CreateObject("roArray", 300, true)
-subReddits.Push("settings")
-subReddits.Push("askreddit")
-subReddits.Push("aww")
-return subReddits
+'subReddits = CreateObject("roArray", 300, true)
+'subReddits.Push("settings")
+'subReddits.Push("askreddit")
+'subReddits.Push("aww")
+'return subReddits
 
 
 	if(isLoggedIn() = true)
@@ -244,8 +254,9 @@ FUNCTION getTheAfter(list)
 	
 	print "couldnt find the after returning invalid"
 	
-	'after = list[list.count() - 1].Lookup(id)
-	return invalid
+	after = list[List.count() - 1].Lookup(id)
+	return after
+	'return invalid
 	
 END FUNCTION
 
@@ -306,3 +317,17 @@ Function isGallery(url as string) As Boolean
 	endif
 End Function
 
+FUNCTION removeOldLoadMore(list) as Object
+	tmpList = CreateObject("roArray", 100, true)
+
+	for each post in list
+		if (post.DoesExist("after")=false) then
+			tmpList.Push(post)
+			'print("not the after")
+		else
+			'print "this the after"
+		END IF
+	end for
+	
+	return tmpList
+END FUNCTION

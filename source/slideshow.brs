@@ -32,6 +32,7 @@ function showSlideShow(originalList,startId, port)
 	addThesePosts = CreateObject("roArray", 28, true)
 	attemptMoreCount = 0
 	paused = false
+	subReddit = list[0].subReddit
 	
 	while true
          msg = wait(0, port)
@@ -51,7 +52,7 @@ function showSlideShow(originalList,startId, port)
 		 		if((after <> invalid) AND (paused = false) )
 						print "attempting to load more posts attempt = " + attemptMoreCount.tostr()
 						attemptMoreCount = attemptMoreCount +1
-						subReddit = list[0].subReddit
+						
 						newList = loadMorePosts(subReddit, after)
 						after = getTheAfter(newList)	
 									
@@ -74,6 +75,12 @@ function showSlideShow(originalList,startId, port)
              if msg.isScreenClosed() then
 				'return the list that also contains the self posts
 				 originalList.Append(list)
+				 'add a load more to this
+				 if(attemptMoreCount < 35) ' we dont want to have a load more if theres already a ton of posts
+					after = getTheAfter(list)
+					more = generateLoadMorePost(after,subreddit, 99) 'the count variable just needs to be > 0
+					originalList.Append(more)
+				 END IF
                  return originalList 'when the user closes the screen return any new reddit posts we downloaded
 			 end if
 
@@ -173,20 +180,7 @@ FUNCTION removeSelfPosts(list) as Object
 END FUNCTION
 
 
-FUNCTION removeOldLoadMore(list) as Object
-	tmpList = CreateObject("roArray", 122, true)
 
-	for each post in list
-		if (post.DoesExist("after")=false) then
-			tmpList.Push(post)
-			'print("not the after")
-		else
-			'print "this the after"
-		END IF
-	end for
-	
-	return tmpList
-END FUNCTION
 
 'pass in the list and the start ID and find the index the ID has
 FUNCTION findStartIndex(list, id)

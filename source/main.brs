@@ -79,7 +79,17 @@ function loadMainGrid()
 				 'for images show a slideshow
 				 if(list[row][col].self = false )
 					list[row] = showSlideShow(list[row],list[row][col].id,port)
-				 ELSE
+				 ELSE IF(list[row][col].name = "loadmore" )
+					'load more posts for this subreddit
+					dialog = showLoadingScreen( "loading MOAR", port)
+					subReddit = list[row][col].subReddit
+					after = getTheAfter(list[row])	
+					list[row] = removeOldLoadMore(list[row])
+					newPosts = loadMorePosts(subReddit,after)
+					list[row].Append(newPosts) 
+					dialog.Close()
+				 
+				 ELSE					
 					'for self posts show the comments page
 					showComments(list[row][col])
 				 END IF
