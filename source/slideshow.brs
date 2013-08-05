@@ -10,6 +10,9 @@ return s
 end function
 
 function showSlideShow(originalList,startId, port)
+	subReddit = originalList[0].subReddit
+	dialog = showLoadingScreen( "loading subReddit:  " + subReddit , port)
+ 
 	after = getTheAfter(originalList)	
 	list= removeSelfPosts(originalList)
 	activeListCount = list.count()
@@ -25,14 +28,14 @@ function showSlideShow(originalList,startId, port)
     s.Show()
 	startIndex = findStartIndex(list, startId)
 	s.SetNext(startIndex, true)
-	
+	dialog.Close()
 	msg = "declaring"
 	loading = false
 	row = invalid
 	addThesePosts = CreateObject("roArray", 28, true)
 	attemptMoreCount = 0
 	paused = false
-	subReddit = list[0].subReddit
+	
 	
 	while true
          msg = wait(0, port)
