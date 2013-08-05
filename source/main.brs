@@ -27,7 +27,7 @@ function loadMainGrid()
 	
     for j = 0 to subReddits.Count() - 1
 		if (j=0) then
-			settings = getSettingsGrid()
+			settings = getSettingsGridForHome()
 			grid.SetContentList(0, settings)
 		else
 			list[j] = CreateObject("roArray", 28, true)
@@ -74,8 +74,9 @@ function loadMainGrid()
 					else
 						login()
 					END IF
-				 ELSE 
-				 
+				 ELSE if(row=0 AND col=0) THEN 'show settings grid
+					settingsGrid()
+				 ELSE
 				 'for images show a slideshow
 				 if(list[row][col].self = false )
 					list[row] = showSlideShow(list[row],list[row][col].id,port)
