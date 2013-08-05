@@ -4,5 +4,5 @@ splash_screen_hd=pkg:/images/reddit-logo-hd.png
 splash_screen_sd=pkg:/images/reddit-logo-sd.png
 splash_color=#ffffff
 major_version=1
-minor_version=0
-build_version=00000
+minor_version=1
+build_version=00002
