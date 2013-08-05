@@ -11,7 +11,7 @@ end function
 
 function showSlideShow(originalList,startId, port)
 	subReddit = originalList[0].subReddit
-	dialog = showLoadingScreen( "loading SubReddit:  " + subReddit , port)
+	dialog = showLoadingScreen( "loading SubReddit:  r/" + subReddit , port)
  
 	timer = getTimerSetting()
 	timer = timer.ToInt()
