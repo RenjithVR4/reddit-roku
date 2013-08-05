@@ -1,15 +1,14 @@
 Function login()
 
-	username = getUserInput("Login - Username", "Enter your Reddit username", "faketestuser")
+	username = getUserInput("Login - Username", "Enter your Reddit username", "")
 	if(username = "-1")
 		return -1    'user hit the back btn
 	END IF
-	password = getUserInput("Login - Password", "Enter your Reddit password", "abc123")
+	password = getUserInput("Login - Password", "Enter your Reddit password", "")
 	if(password = "-1")
 		return -1 'user hit the back btn
 	END IF
-	'username ="faketestuser"
-	'password = "abc123"
+
 	
 	http = NewHttp2("http://www.reddit.com/api/login", "application/json") 'we want to use SSL encryption so we dont send a plaintext password 
 	'http = NewHttp2("https://ssl.reddit.com/api/login", "application/json")

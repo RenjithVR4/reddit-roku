@@ -149,9 +149,9 @@ Function CreateDefaultTheme() as Object
 	'one msg dialog
 	theme.ButtonMenuNormalOverlayText =black
 	theme.ButtonMenuNormalText = black
-	theme.ButtonNormalColor = white
+	theme.ButtonNormalColor = black
 	theme.DialogBodyText = black
-	theme.ButtonHighlightColor = white
+	theme.ButtonHighlightColor = black
 	theme.DialogTitleText = black
 
 

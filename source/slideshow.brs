@@ -15,7 +15,7 @@ function showSlideShow(originalList,startId, port)
  
 	timer = getTimerSetting()
 	timer = timer.ToInt()
-	timer = timer * 1000
+	timerMilaseconds = timer * 1000
 	
 	showTitle = getShowTitleSetting()
  
@@ -25,7 +25,7 @@ function showSlideShow(originalList,startId, port)
     s = CreateObject("roSlideShow")
     s.SetMessagePort(port)
 	if(showTitle = "yes")
-		s.SetTextOverlayHoldTime(timer)   ' 1 second = 1000 milaseconds
+		s.SetTextOverlayHoldTime(timerMilaseconds)   ' 1 second = 1000 milaseconds
 	else
 		s.SetTextOverlayIsVisible(false)
 		s.SetTextOverlayHoldTime(0)
@@ -63,7 +63,7 @@ function showSlideShow(originalList,startId, port)
 		
 
 		    if msg.isRequestSucceeded() then
-		 		if((after <> invalid) AND (paused = false) AND attemptMoreCount < 55 )
+		 		if((after <> invalid) AND (paused = false) AND (attemptMoreCount < 55) )
 						print "attempting to load more posts attempt = " + attemptMoreCount.tostr()
 						attemptMoreCount = attemptMoreCount +1
 						
