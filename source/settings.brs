@@ -35,12 +35,12 @@ Function getSettingsGridForHome()
 	if(isLoggedIn() = true)
 		username = getSetting("username")
 		L.Title = username + " - Logout"
-		L.SDPosterUrl = "http://www.dudelol.com/thumbs/power-outlet-style.jpg"
-		L.HDPosterUrl = "http://www.dudelol.com/thumbs/power-outlet-style.jpg"	
+		L.SDPosterUrl = "pkg:/images/reddit-icon.jpg"
+		L.HDPosterUrl = "pkg:/images/reddit-icon.jpg"
 	else		
 		L.Title = "Login"
-		L.SDPosterUrl = "http://www.dudelol.com/thumbs/power-outlet-style.jpg"
-		L.HDPosterUrl = "http://www.dudelol.com/thumbs/power-outlet-style.jpg"			
+		L.SDPosterUrl = "pkg:/images/reddit-icon.jpg"
+		L.HDPosterUrl = "pkg:/images/reddit-icon.jpg"		
 	END IF
 	settings.Push(L)
 	return settings
