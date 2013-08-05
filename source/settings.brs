@@ -88,18 +88,17 @@ Function settingsGrid()
 	timer.name = "timer"
 	timer.SDPosterUrl = "pkg:/images/settings.jpg"
 	timer.HDPosterUrl = "pkg:/images/settings.jpg"
-    timer.ShortDescriptionLine1 = "How many seconds between each post?"
+
 	timerSetting =getTimerSetting()
-	timer.ShortDescriptionLine2 = "currently: "+timerSetting
+	timer.Description =  "currently: "+timerSetting + " seconds"
     list.Push(timer)
 	display = CreateObject("roAssociativeArray")
     display.Title = "Show title of Reddit post at the bottom of the screen?"
 	display.SDPosterUrl = "pkg:/images/settings.jpg"
 	display.HDPosterUrl = "pkg:/images/settings.jpg"
 	display.name = "displayTitle"
-    display.ShortDescriptionLine1 = "Show the title of the post at the bottom of the screen?"
 	displaySetting =getShowTitleSetting()
-	display.ShortDescriptionLine2 = "currently: "+displaySetting
+	display.Description = "currently: "+displaySetting
     list.Push(display)
 	grid.SetContentList(0, list) 
 	grid.Show()
@@ -124,7 +123,9 @@ Function settingsGrid()
 					settingsGrid()
 					return -1
 				ELSE IF(name = "displayTitle" )
-					 
+					changeDisplayGrid()
+					settingsGrid()
+					return -1					 
 				END IF
 				 
 				 
@@ -145,7 +146,8 @@ Function changeTimerGrid()
 
     grid.SetupLists(1)
 	rowTitles = CreateObject("roArray", 1, true)
-    rowTitles.Push("Timer seconds")
+	currentSeconds = getTimerSetting()
+    rowTitles.Push("Timer seconds, currently: " + currentSeconds + " seconds")
     grid.SetListNames(rowTitles) 
 	
 	list = CreateObject("roArray", 20, true)
@@ -179,11 +181,64 @@ Function changeTimerGrid()
 				col = msg.GetData()
 				 
 				newTime = list[col].seconds
-				setSetting("timer", newTime) As Void
-				 
+				setSetting("timer", newTime) 
+				print "changed timer settings to " + newTime
+				 return -1
              endif
          endif
      end while
+END FUNCTION
+
+function changeDisplayGrid()
+	port=CreateObject("roMessagePort")
+	grid = CreateObject("roGridScreen")
+    grid.SetMessagePort(port)
+    grid.SetDisplayMode("scale-to-fit")
+    grid.SetGridStyle("Flat-Square")
+
+    grid.SetupLists(1)
+	rowTitles = CreateObject("roArray", 1, true)
+	currentDisplay = getShowTitleSetting()
+    rowTitles.Push("Display the Reddit post title at the bottom? currently: " + currentDisplay)
+    grid.SetListNames(rowTitles) 
 	
+	list = CreateObject("roArray", 2, true)
+	yes = CreateObject("roAssociativeArray")
+	yes.Title = "yes"
+	yes.option = "yes"
+	yes.SDPosterUrl = "pkg:/images/settings.jpg"
+	yes.HDPosterUrl = "pkg:/images/settings.jpg"
+	list.Push(yes)
+
+	no = CreateObject("roAssociativeArray")
+	no.Title = "no"
+	no.option = "no"
+	no.SDPosterUrl = "pkg:/images/settings.jpg"
+	no.HDPosterUrl = "pkg:/images/settings.jpg"
+	list.Push(no)
 	
+	grid.SetContentList(0, list) 
+	grid.Show()
+ 
+	while true
+         msg = wait(0, port)
+         if type(msg) = "roGridScreenEvent" then
+             if msg.isScreenClosed() then
+                 return -1
+             elseif msg.isListItemFocused()
+                 print "Focused msg: ";msg.GetMessage();"row: ";msg.GetIndex();
+                 print " col: ";msg.GetData()
+             elseif msg.isListItemSelected()
+                print "Selected msg: ";msg.GetMessage();"row: ";msg.GetIndex();
+                print " col: ";msg.GetData()
+				row = msg.GetIndex()
+				col = msg.GetData()
+				 
+				option = list[col].option
+				setSetting("showTitle", option) 
+				print "changed display title setting:  " + option
+				 return -1
+             endif
+         endif
+     end while
 END FUNCTION
