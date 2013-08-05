@@ -70,8 +70,8 @@ display= getSetting("showTitle")
 END FUNCTION
 
 
-Function settingsGrid()
-	port=CreateObject("roMessagePort")
+Function settingsGrid(port)
+
 	grid = CreateObject("roGridScreen")
     grid.SetMessagePort(port)
     grid.SetDisplayMode("scale-to-fit")
@@ -119,12 +119,14 @@ Function settingsGrid()
 				name = list[col].name
 				
 				IF(name = "timer" )
-					changeTimerGrid()
-					settingsGrid()
+
+					changeTimerGrid(port)
+					settingsGrid(port)
 					return -1
 				ELSE IF(name = "displayTitle" )
-					changeDisplayGrid()
-					settingsGrid()
+					
+					changeDisplayGrid(port)
+					settingsGrid(port)
 					return -1					 
 				END IF
 				 
@@ -137,8 +139,8 @@ Function settingsGrid()
 END FUNCTION
 
 
-Function changeTimerGrid()
-	port=CreateObject("roMessagePort")
+Function changeTimerGrid(port)
+
 	grid = CreateObject("roGridScreen")
     grid.SetMessagePort(port)
     grid.SetDisplayMode("scale-to-fit")
@@ -189,8 +191,8 @@ Function changeTimerGrid()
      end while
 END FUNCTION
 
-function changeDisplayGrid()
-	port=CreateObject("roMessagePort")
+function changeDisplayGrid(port)
+
 	grid = CreateObject("roGridScreen")
     grid.SetMessagePort(port)
     grid.SetDisplayMode("scale-to-fit")
@@ -199,7 +201,7 @@ function changeDisplayGrid()
     grid.SetupLists(1)
 	rowTitles = CreateObject("roArray", 1, true)
 	currentDisplay = getShowTitleSetting()
-    rowTitles.Push("Display the Reddit post title at the bottom? currently: " + currentDisplay)
+    rowTitles.Push("Display the Reddit post title?")
     grid.SetListNames(rowTitles) 
 	
 	list = CreateObject("roArray", 2, true)

@@ -75,7 +75,7 @@ function loadMainGrid()
 						login()
 					END IF
 				 ELSE if(row=0 AND col=0) THEN 'show settings grid
-					settingsGrid()
+					settingsGrid(port)
 				 ELSE
 				 'for images show a slideshow
 				 if(list[row][col].self = false )

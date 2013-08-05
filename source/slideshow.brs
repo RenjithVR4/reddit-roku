@@ -11,18 +11,29 @@ end function
 
 function showSlideShow(originalList,startId, port)
 	subReddit = originalList[0].subReddit
-	dialog = showLoadingScreen( "loading subReddit:  " + subReddit , port)
+	dialog = showLoadingScreen( "loading SubReddit:  " + subReddit , port)
+ 
+	timer = getTimerSetting()
+	timer = timer.ToInt()
+	timer = timer * 1000
+	
+	showTitle = getShowTitleSetting()
  
 	after = getTheAfter(originalList)	
 	list= removeSelfPosts(originalList)
 	activeListCount = list.count()
     s = CreateObject("roSlideShow")
     s.SetMessagePort(port)
-	s.SetTextOverlayHoldTime(5000)   ' 1 second = 1000 milaseconds
-	' s.SetTextOverlayIsVisible(true)
+	if(showTitle = "yes")
+		s.SetTextOverlayHoldTime(timer)   ' 1 second = 1000 milaseconds
+	else
+		s.SetTextOverlayIsVisible(false)
+		s.SetTextOverlayHoldTime(0)
+	end if
+
 	s.SetUnderscan(3) ' gives a padding around the image because TVs cut off the outer part of the image sometimes
 	' s.SetDisplayMode("photo-fit") 'I think default is best
-	s.SetPeriod(5) ' dont need this
+	s.SetPeriod(timer) ' dont need this
 	
 	s.SetContentList(list)
     s.Show()
@@ -52,20 +63,25 @@ function showSlideShow(originalList,startId, port)
 		
 
 		    if msg.isRequestSucceeded() then
-		 		if((after <> invalid) AND (paused = false) )
+		 		if((after <> invalid) AND (paused = false) AND attemptMoreCount < 55 )
 						print "attempting to load more posts attempt = " + attemptMoreCount.tostr()
 						attemptMoreCount = attemptMoreCount +1
 						
 						newList = loadMorePosts(subReddit, after)
-						after = getTheAfter(newList)	
+						if(newList = invalid)
+							'do nothing
+							print "newList was invalid" 
+						else
+							after = getTheAfter(newList)	
 									
-						newListRemovedSelf = removeSelfPosts(newList)
-						
-						'make sure the new subreddits we found contained at least one image
-						if(newListRemovedSelf.count() > 1)
-							print "adding more posts count= " + newListRemovedSelf.count().tostr()
-							list.Append(newListRemovedSelf)
-							addThesePosts.Append(newListRemovedSelf)
+							newListRemovedSelf = removeSelfPosts(newList)
+							
+							'make sure the new subreddits we found contained at least one image
+							if(newListRemovedSelf.count() > 1)
+								print "adding more posts count= " + newListRemovedSelf.count().tostr()
+								list.Append(newListRemovedSelf)
+								addThesePosts.Append(newListRemovedSelf)
+							END IF
 						END IF
 				else
 					'print "after is invalid"
@@ -81,8 +97,10 @@ function showSlideShow(originalList,startId, port)
 				 'add a load more to this
 				 if(attemptMoreCount < 35) ' we dont want to have a load more if theres already a ton of posts
 					after = getTheAfter(list)
-					more = generateLoadMorePost(after,subreddit, 99) 'the count variable just needs to be > 0
-					originalList.Append(more)
+					if(after <> invalid)
+						more = generateLoadMorePost(after,subreddit, 99) 'the count variable just needs to be > 0
+						originalList.Append(more)
+					END IF
 				 END IF
                  return originalList 'when the user closes the screen return any new reddit posts we downloaded
 			 end if

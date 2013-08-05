@@ -1,7 +1,13 @@
 Function login()
 
 	username = getUserInput("Login - Username", "Enter your Reddit username", "faketestuser")
+	if(username = "-1")
+		return -1    'user hit the back btn
+	END IF
 	password = getUserInput("Login - Password", "Enter your Reddit password", "abc123")
+	if(password = "-1")
+		return -1 'user hit the back btn
+	END IF
 	'username ="faketestuser"
 	'password = "abc123"
 	
@@ -83,7 +89,7 @@ FUNCTION getUserInput(title, dspText, default) as String
          msg = wait(0, screen.GetMessagePort()) 
          if type(msg) = "roKeyboardScreenEvent"
              if msg.isScreenClosed()
-                 return -1
+                 return "-1"
              else if msg.isButtonPressed() then
                  print "Evt:"; msg.GetMessage ();" idx:"; msg.GetIndex()
                  if msg.GetIndex() = 1
