@@ -119,31 +119,31 @@ function showSlideShow(originalList,startId, port)
 			 end if
 			 
 			 if msg.isButtonPressed() then
-			 
+				index = msg.GetIndex()
 			 'RESUME
-				IF msg.GetIndex() = 1 THEN
+				IF index = 1 THEN
 					print "User hit resume"
 					s.ClearButtons()
 					s.Resume()
 					paused = false
 				END IF
 				
-				if(isLoggedIn() = false) THEN
+				if(isLoggedIn() = false AND (index =2 OR index=3 OR index = 5)) THEN
 				'show need to login msg
 					showMessage("Please login first")
-				ELSE IF msg.GetIndex() = 2 THEN			
+				ELSE IF index = 2 THEN			
 				'UPVOTE
 					print "User hit upvote btn"
 					vote(list[row].name, "1")
 					s.ClearButtons()
 					paused = false			
 				'DOWNVOTE
-				ELSE IF msg.GetIndex() = 3 THEN
+				ELSE IF index = 3 THEN
 					print "User hit downvote btn"
 					vote(list[row].name, "-1")
 					s.ClearButtons()
 					paused = false
-				ELSE IF msg.GetIndex() = 5 THEN
+				ELSE IF index = 5 THEN
 				'SAVE POST
 					print "save post: " + list[row].Title
 					savePost(list[row].name)
@@ -151,13 +151,13 @@ function showSlideShow(originalList,startId, port)
 					paused = false
 				END IF
 				
-				IF msg.GetIndex() = 4 THEN
+				IF index = 4 THEN
 					print "view comments"
 					showComments(list[row])
 				END IF
 				
 			
-				IF msg.GetIndex() = 9 THEN
+				IF index = 9 THEN
 					print "view full img"
 					showImg(list[row].Url) 
 				END IF

@@ -254,7 +254,7 @@ FUNCTION getTheAfter(list)
 	
 	print "couldnt find the after returning invalid"
 	
-	after = list[List.count() - 1].Lookup(id)
+	after = list[list.count() - 1].Lookup("id")
 	return after
 	'return invalid
 	
