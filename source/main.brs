@@ -20,41 +20,37 @@ function loadMainGrid()
     grid.SetupLists(countSubreddits)
     grid.SetListNames(subReddits) 
 	
-	dialog = CreateObject( "roOneLineDialog" )
-	dialog.SetMessagePort(port)
-	dialog.ShowBusyAnimation() 
-	dialog.SetTitle( "Loading subreddits: 0/" +countSubreddits.tostr()  )
-	dialog.Show()
+	dialog = showLoadingScreen("Loading subreddits: 0/" +countSubreddits.tostr(), port )
 	
 
 	list = CreateObject("roArray", 300, true)
 	
     for j = 0 to subReddits.Count() - 1
-	if (j=0) then
-		settings = getSettingsGrid()
-		grid.SetContentList(0, settings)
-	else
-		list[j] = CreateObject("roArray", 28, true)
-		subReddit = subReddits[j]
-		
-		list[j] = loadMorePosts(subReddit,"")
-		
-		if(list[j] = invalid)
-			'build a failed to load icon for the grid
-			list[j] = buildErrorGrid()
+		if (j=0) then
+			settings = getSettingsGrid()
+			grid.SetContentList(0, settings)
+		else
+			list[j] = CreateObject("roArray", 28, true)
+			subReddit = subReddits[j]
+			
+			list[j] = loadMorePosts(subReddit,"")
+			
+			if(list[j] = invalid)
+				'build a failed to load icon for the grid
+				list[j] = buildErrorGrid()
+			END IF
+			
+			dialog.SetTitle( "Loading subreddits: "+j.tostr()+"/" +countSubreddits.tostr()  )
+			dialog.Show()
+			
+			grid.SetContentList(j, list[j]) 
 		END IF
-		
-		dialog.SetTitle( "Loading subreddits: "+j.tostr()+"/" +countSubreddits.tostr()  )
-		dialog.Show()
-		
-        grid.SetContentList(j, list[j]) 
-	END IF
-     end for 
+    end for 
 	 
 	
 	 grid.SetFocusedListItem(2,0)
      grid.Show() 
-	 dialog.Close() ' why does the app close when I close the dialog?
+	 dialog.Close() 
 	 
     while true
          msg = wait(0, port)
@@ -203,6 +199,14 @@ Function showMessage(msg As String)
 	return -1
 END FUNCTION 
 
+Function showLoadingScreen(msg As String,port)
+	dialog = CreateObject( "roOneLineDialog" )
+	dialog.SetMessagePort(port)
+	dialog.ShowBusyAnimation() 
+	dialog.SetTitle( msg )
+	dialog.Show()
+	return dialog
+END FUNCTION
 
 Function IsHD()
     di = CreateObject("roDeviceInfo")
