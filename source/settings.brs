@@ -48,12 +48,12 @@ Function getSettingsGridForHome()
 END FUNCTION
 
 function getTimerSetting() as String
-'default 10 seconds
+'default 20 seconds
 timer = getSetting("timer")
 	if(timer <> invalid)
 		return timer
 	else
-		return "5"
+		return "20"
 	end if
 
 END FUNCTION

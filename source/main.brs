@@ -151,7 +151,7 @@ Function CreateDefaultTheme() as Object
 	theme.ButtonMenuNormalText = black
 	theme.ButtonNormalColor = black
 	theme.DialogBodyText = black
-	theme.ButtonHighlightColor = black
+	theme.ButtonHighlightColor = white
 	theme.DialogTitleText = black
 
 
