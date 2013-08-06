@@ -161,6 +161,8 @@ FUNCTION generateLoadMorePost(after,subreddit,count)
 			more.Title = "Couldn't find any pictures or self posts, click here to try again"
 		END IF
 		more.name = "loadmore"
+		more.OverhangSliceHD =  "pkg:/images/refresh.jpg"
+		more.OverhangSliceSD =  "pkg:/images/refresh.jpg"
 		more.self=true 'the slideshow will update when it comes to this post
 		more.Url = "pkg:/images/loading.png" 'shows the loading screen
 		'get the subreddit from the json
