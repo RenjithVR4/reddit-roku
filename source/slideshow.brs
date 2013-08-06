@@ -59,6 +59,14 @@ function showSlideShow(originalList,startId, port)
 				 paused = true
                  s= addButtons(s)
 			  END IF
+			  
+			  'if the user ever hits the play button we will resume
+			  if(msg.getIndex()=13)
+					s.ClearButtons()
+					s.Resume()
+					paused = false
+			  END IF			  
+			  
 		  END IF
 		
 
