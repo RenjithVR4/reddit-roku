@@ -1,5 +1,9 @@
 title=Reddit
 subtitle=View images and self posts of Reddit. Login to view your SubReddits and Upvote/downvote and save Reddit posts.
+mm_icon_focus_hd=pkg:/images/mm_icon_focus_hd.png
+mm_icon_side_hd=pkg:/images/mm_icon_side_hd.png
+mm_icon_focus_sd=pkg:/images/mm_icon_focus_sd.png
+mm_icon_side_sd=pkg:/images/mm_icon_side_sd.png
 splash_screen_hd=pkg:/images/reddit-logo-hd.png
 splash_screen_sd=pkg:/images/reddit-logo-sd.png
 splash_color=#ffffff
