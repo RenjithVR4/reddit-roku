@@ -185,7 +185,7 @@ function getSubreddits()
 		subReddits.Push("Settings")
 		subReddits.Push("funny")
 		subReddits.Push("pics")
-		http = NewHttp2("http://www.reddit.com/reddits/mine.json", "application/json")
+		http = NewHttp2("http://www.reddit.com/reddits/mine.json?limit=100", "application/json")
 		response= http.GetToStringWithTimeout(90)
 		json = ParseJSON(response)
 		for each post in json.data.children	
