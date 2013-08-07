@@ -7,7 +7,6 @@ End Function
 
 function loadMainGrid()
 	port=CreateObject("roMessagePort")
-
 	subReddits = getSubreddits()
 	countSubreddits = subReddits.Count()
 	

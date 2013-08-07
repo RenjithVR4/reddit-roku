@@ -161,8 +161,8 @@ FUNCTION generateLoadMorePost(after,subreddit,count)
 			more.Title = "Couldn't find any pictures or self posts, click here to try again"
 		END IF
 		more.name = "loadmore"
-		more.OverhangSliceHD =  "pkg:/images/refresh.jpg"
-		more.OverhangSliceSD =  "pkg:/images/refresh.jpg"
+		more.OverhangSliceHD =  "pkg:/images/refresh.png"
+		more.OverhangSliceSD =  "pkg:/images/refresh.png"
 		more.self=true 'the slideshow will update when it comes to this post
 		more.Url = "pkg:/images/loading.png" 'shows the loading screen
 		'get the subreddit from the json
@@ -170,24 +170,23 @@ FUNCTION generateLoadMorePost(after,subreddit,count)
 		return more
 END FUNCTION
 
-function getSubreddits()
-'subReddits = CreateObject("roArray", 300, true)
-'subReddits.Push("settings")
-'subReddits.Push("askreddit")
-'subReddits.Push("aww")
-'return subReddits
+function userHaveThisSubreddit(subRedditName as String,json) as Boolean		
+	for each post in json.data.children	
+		name =  LCase(post.data.display_name)
+		if (name = subRedditName) THEN
+			print "the user IS subscribed to " + subRedditName
+			return true
+		END IF
+	end for
+	
+	print "the user IS NOT subscribed to " + subRedditName
+	return false
+END FUNCTION
 
 
-	if(isLoggedIn() = true)
+FUNCTION filterBlockedSubreddits(subReddits,json )
 		blocked = getBlockedSubreddits()
-		subReddits = CreateObject("roArray", 300, true)
-		'always include these subreddits first
-		subReddits.Push("Settings")
-		subReddits.Push("funny")
-		subReddits.Push("pics")
-		http = NewHttp2("http://www.reddit.com/reddits/mine.json?limit=100", "application/json")
-		response= http.GetToStringWithTimeout(90)
-		json = ParseJSON(response)
+		
 		for each post in json.data.children	
 			found = false
 			'block the blocked subreddits
@@ -201,6 +200,35 @@ function getSubreddits()
 					subReddits.Push(name)
 			END IF
 		end for
+		return subReddits
+END FUNCTION
+
+function getSubreddits()
+'for testing on certian subreddits
+'subReddits = CreateObject("roArray", 300, true)
+'subReddits.Push("settings")
+'subReddits.Push("askreddit")
+'subReddits.Push("aww")
+'return subReddits
+
+
+	if(isLoggedIn() = true)
+		
+		subReddits = CreateObject("roArray", 300, true)
+		'always include these subreddits first
+		subReddits.Push("Settings")	
+		http = NewHttp2("http://www.reddit.com/reddits/mine.json?limit=100", "application/json")
+		response= http.GetToStringWithTimeout(90)
+		json = ParseJSON(response)
+		print "starting to filter subreddits"
+		if(userHaveThisSubreddit("pics",json) = true)
+			subReddits.Push("pics")
+		end if
+		if(userHaveThisSubreddit("funny",json) = true)
+			subReddits.Push("funny")
+		end if
+		subReddits = filterBlockedSubreddits(subReddits,json )
+
 		
 		if(subReddits.Count() < 3)
 			subReddits = getDefaultSubreddits()
