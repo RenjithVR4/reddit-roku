@@ -1,12 +1,18 @@
 Library "v30/bslCore.brs"
 
 Function Main()
+
 	initTheme()
 	loadMainGrid()
-	print "I got here, the app should close now"
+
 End Function
 
-function loadMainGrid()
+
+
+
+
+
+sub loadMainGrid()
 	port=CreateObject("roMessagePort")
 	subReddits = getSubreddits()
 	countSubreddits = subReddits.Count()
@@ -19,8 +25,10 @@ function loadMainGrid()
 
     grid.SetupLists(countSubreddits)
     grid.SetListNames(subReddits) 
-	
-	dialog = showLoadingScreen("Loading subreddits: 0/" +countSubreddits.tostr(), port )
+		 grid.SetFocusedListItem(2,0)
+     grid.Show() 
+	dialog = showLoadingScreen("Loading subreddits: 0/" +countSubreddits.tostr(),port)
+
 	
 
 	list = CreateObject("roArray", 300, true)
@@ -48,15 +56,14 @@ function loadMainGrid()
     end for 
 	 
 	
-	 grid.SetFocusedListItem(2,0)
-     grid.Show() 
+
 	 dialog.Close() 
 	 
     while true
          msg = wait(0, port)
          if type(msg) = "roGridScreenEvent" then
              if msg.isScreenClosed() then
-                 return -1
+                 return
              elseif msg.isListItemFocused()
                  print "Focused msg: ";msg.GetMessage();"row: ";msg.GetIndex();
                  print " col: ";msg.GetData()
@@ -82,7 +89,7 @@ function loadMainGrid()
 					list[row] = showSlideShow(list[row],list[row][col].id,port)
 				 ELSE IF(list[row][col].name = "loadmore" )
 					'load more posts for this subreddit
-					dialog = showLoadingScreen( "loading MOAR", port)
+					dialog = showLoadingScreen( "loading MOAR",port)
 					subReddit = list[row][col].subReddit
 					after = getTheAfter(list[row])	
 					list[row] = removeOldLoadMore(list[row])
@@ -104,7 +111,7 @@ function loadMainGrid()
              endif
          endif
      end while
-END FUNCTION
+END sub
 
 
 function buildErrorGrid()
