@@ -3,6 +3,7 @@ Library "v30/bslCore.brs"
 Function Main()
 	initTheme()
 	loadMainGrid()
+	print "I got here, the app should close now"
 End Function
 
 function loadMainGrid()
