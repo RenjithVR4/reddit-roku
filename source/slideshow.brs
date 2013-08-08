@@ -36,9 +36,9 @@ function showSlideShow(originalList,startId, port)
 	s.SetPeriod(timer) ' dont need this
 	
 	s.SetContentList(list)
-    s.Show()
 	startIndex = findStartIndex(list, startId)
 	s.SetNext(startIndex, true)
+	s.Show()
 	dialog.Close()
 	msg = "declaring"
 	loading = false
