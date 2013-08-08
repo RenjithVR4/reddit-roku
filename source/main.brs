@@ -195,7 +195,7 @@ Function CreateDefaultTheme() as Object
 	black = "#000000"
 	white = "#ffffff"
 	hdLogo = "pkg:/images/reddit-logo-hd.jpg"
-	sdLogo = "pkg:/images/reddit-logo-sd.png"
+	sdLogo = "pkg:/images/reddit-logo-sd.jpg"
 	
 	theme.BackgroundColor = white
 	theme.ParagraphBodyText = black
@@ -240,8 +240,8 @@ Function CreateDefaultTheme() as Object
 	
     theme.GridScreenLogoSD          = sdLogo
 	theme.OverhangPrimaryLogoSD     = sdLogo
-    theme.GridScreenLogoOffsetSD_X  = "160"
-    theme.GridScreenLogoOffsetSD_Y  = "18"
+    theme.GridScreenLogoOffsetSD_X  = "0"
+    theme.GridScreenLogoOffsetSD_Y  = "10"
 	theme.GridScreenOverhangHeightSD = "100"
     
     ' to use your own focus ring artwork 
