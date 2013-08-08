@@ -30,6 +30,7 @@ Function getSettingsGridForHome()
 	o.SDPosterUrl = "pkg:/images/settings.jpg"
 	o.HDPosterUrl = "pkg:/images/settings.jpg"
 	settings.Push(o)
+	
 	L = CreateObject("roAssociativeArray")
 	L.self = true
 	if(isLoggedIn() = true)
@@ -43,6 +44,14 @@ Function getSettingsGridForHome()
 		L.HDPosterUrl = "pkg:/images/reddit-icon.jpg"		
 	END IF
 	settings.Push(L)
+	
+	h = CreateObject("roAssociativeArray")
+	h.Title = "Help"
+	h.self = true
+	h.SDPosterUrl = "pkg:/images/question.png"
+	h.HDPosterUrl = "pkg:/images/question.png"
+	settings.Push(h)
+	
 	return settings
 	
 END FUNCTION

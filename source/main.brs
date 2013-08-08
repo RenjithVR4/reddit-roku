@@ -44,13 +44,13 @@ sub loadMainGrid()
 			dialog.SetTitle( "Loading subreddits: "+j.tostr()+"/" +countSubreddits.tostr()  )
 			dialog.Show()
 			
-			grid.SetContentList(j, list[j]) 
+			grid.SetContentList(j, list[j])
 		END IF
     end for 
 	 
 	
 
-	 dialog.Close() 
+	dialog.Close() 
 	 
     while true
          msg = wait(0, port)
@@ -67,14 +67,16 @@ sub loadMainGrid()
 				 col = msg.GetData()
 				 
 				 'login or logout
-				 IF (row=0 AND col=1) THEN
+				if(row=0 AND col=2) THEN 'show settings grid
+					showHelp()
+				ELSE IF (row=0 AND col=1) THEN
 					'show the login screen
 					if(isLoggedIn() = true) THEN
 						logout()
 					else
 						login()
-					END IF
-				 ELSE if(row=0 AND col=0) THEN 'show settings grid
+					END IF 
+				ELSE if(row=0 AND col=0) THEN 'show settings grid
 					settingsGrid(port)
 				 ELSE
 				 'for images show a slideshow

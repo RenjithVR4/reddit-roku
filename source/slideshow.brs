@@ -278,8 +278,18 @@ function showHelp()
    canvas.SetRequireAllImagesToDraw(true)
    canvas.SetLayer(1, canvasItems)
    canvas.Show() 
-   sleep(17000)
-   canvas.Close()
-
+	sleep(1000)
+   
+   while(true)
+       msg = wait(0,port) 
+       if type(msg) = "roImageCanvasEvent" then
+           if (msg.isRemoteKeyPressed()) then
+				canvas.Close()
+           else if (msg.isScreenClosed()) then
+               print "Closed"
+               return -1
+           end if
+       end if
+   end while
 
 END FUNCTION
