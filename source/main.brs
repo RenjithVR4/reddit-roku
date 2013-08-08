@@ -1,16 +1,9 @@
 Library "v30/bslCore.brs"
 
 Function Main()
-
 	initTheme()
 	loadMainGrid()
-
 End Function
-
-
-
-
-
 
 sub loadMainGrid()
 	port=CreateObject("roMessagePort")
@@ -154,7 +147,7 @@ Function CreateDefaultTheme() as Object
     theme.GridScreenListNameColor   = black
 	
 	'one msg dialog
-	theme.ButtonMenuNormalOverlayText =black
+	theme.ButtonMenuNormalOverlayText = white
 	theme.ButtonMenuNormalText = black
 	theme.ButtonNormalColor = black
 	theme.DialogBodyText = black
