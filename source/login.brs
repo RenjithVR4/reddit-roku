@@ -9,7 +9,7 @@ Function login()
 		return -1 'user hit the back btn
 	END IF
 
-	
+	 
 	http = NewHttp2("http://www.reddit.com/api/login", "application/json") 'we want to use SSL encryption so we dont send a plaintext password 
 	'http = NewHttp2("https://ssl.reddit.com/api/login", "application/json")
 

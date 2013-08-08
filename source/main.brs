@@ -12,54 +12,96 @@ sub loadMainGrid()
 	
 	
 	grid = CreateObject("roGridScreen")
-    grid.SetMessagePort(port)
-    grid.SetDisplayMode("scale-to-fit")
-    grid.SetGridStyle("Flat-Square")
+	grid.SetMessagePort(port)
 
     grid.SetupLists(countSubreddits)
-    grid.SetListNames(subReddits) 
-		 grid.SetFocusedListItem(2,0)
-     grid.Show() 
-	dialog = showLoadingScreen("Loading subreddits: 0/" +countSubreddits.tostr(),port)
-
+    grid.SetListNames(subReddits)  'we are now setting these asyncornously
+    grid.SetDisplayMode("scale-to-fit")
+    grid.SetGridStyle("flat-16x9")
+    grid.Show() 
+	'dialog = showLoadingScreen("Loading subreddits: 0/" +countSubreddits.tostr(),port)
 	
-
-	list = CreateObject("roArray", 300, true)
+	list = CreateObject("roArray", 100, true)
 	
-    for j = 0 to subReddits.Count() - 1
-		if (j=0) then
-			settings = getSettingsGridForHome()
-			grid.SetContentList(0, settings)
-		else
-			list[j] = CreateObject("roArray", 28, true)
-			subReddit = subReddits[j]
-			
-			list[j] = loadMorePosts(subReddit,"")
-			
-			if(list[j] = invalid)
-				'build a failed to load icon for the grid
-				list[j] = buildErrorGrid()
-			END IF
-			
-			dialog.SetTitle( "Loading subreddits: "+j.tostr()+"/" +countSubreddits.tostr()  )
-			dialog.Show()
-			
-			grid.SetContentList(j, list[j])
-		END IF
-    end for 
-	 
+	settings = getSettingsGridForHome()
+	'grid.SetListName(0,"Settings")
+	grid.SetContentList(0, settings)
 	
-
-	dialog.Close() 
-	 
-    while true
+	request = CreateObject("roArray", 100, true)
+	'httpPort=CreateObject("roMessagePort")
+	for j = 1 to subReddits.Count() -1
+		request[j] = CreateObject("roUrlTransfer")
+		request[j].SetMessagePort(port)
+		subReddit = subReddits[j]
+		api_url = "http://www.reddit.com/r/" + subReddit + ".json"
+		request[j].SetUrl(api_url)
+		request[j].AsyncGetToString()
+		print "init list " + j.tostr()
+	end for
+	
+	
+	countListAsync = 1 'counting the list but for when the async returns
+	
+	while true
+	print "in awhile"
          msg = wait(0, port)
+		 
+		if (type(msg) = "roUrlEvent")
+			code = msg.GetResponseCode()
+			if (code = 200)
+				newList = invalid
+				response = msg.GetString()
+				json = ParseJSON(response)
+				if(json = invalid)
+					'do nothing
+				else
+					newList = parseJsonPosts(json)
+					subRedditName = newList[0].subReddit
+					if(subRedditName <> invalid)
+						print "got the subreddit= " + subRedditName
+						grid.SetListName(countListAsync,subRedditName)
+						'grid.SetListName(countListAsync,"test")
+					end if
+					list[countListAsync] = newList								
+					if(list[countListAsync] = invalid)
+						'build a failed to load icon for the grid
+						list[countListAsync] = buildErrorGrid()
+					END IF
+					
+					grid.SetContentList(countListAsync, list[countListAsync])
+					grid.show()
+				'	dialog.SetTitle( "Loading subreddits: "+countListAsync.tostr()+ "/" + countSubreddits.tostr() )
+				'	dialog.Show()
+					'print "adding another grid = " +countListAsync.tostr()
+					
+					'print "[" + msg.GetString() + "]"
+				END IF
+				countListAsync = countListAsync+1
+				if(countListAsync = countSubreddits)
+					exit while
+				end if
+			END IF
+		END IF 
+	end while
+	
+	
+
+	'grid.SetFocusedListItem(2,0)
+	grid.show()
+	'dialog.Close()
+	
+	sleep(20000)
+	
+    while true	
+         msg = wait(0, port)
+
          if type(msg) = "roGridScreenEvent" then
              if msg.isScreenClosed() then
                  return
              elseif msg.isListItemFocused()
                  print "Focused msg: ";msg.GetMessage();"row: ";msg.GetIndex();
                  print " col: ";msg.GetData()
+					 
              elseif msg.isListItemSelected()
                  print "Selected msg: ";msg.GetMessage();"row: ";msg.GetIndex();
                  print " col: ";msg.GetData()
@@ -112,6 +154,20 @@ sub loadMainGrid()
      end while
 END sub
 
+function buildSubredditGrid(grid, subRedditName,index)
+	list = CreateObject("roArray",100, true)		
+	list = loadMorePosts(subRedditName,"")
+			
+	if(list = invalid)
+		'build a failed to load icon for the grid
+		list = buildErrorGrid()
+	END IF
+			
+	grid.SetContentList(index, list)
+	grid.show()
+	return list
+			
+END FUNCTION
 
 function buildErrorGrid()
 	tmpList = CreateObject("roArray", 2, true)

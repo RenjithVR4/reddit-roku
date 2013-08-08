@@ -11,7 +11,7 @@ function getDefaultSubreddits()
 	subReddits.Push("askreddit")
    ' subReddits.Push("todayilearned")
    ' subReddits.Push("gifs")
-  '  subReddits.Push("IAmA")
+  '  subReddits.Push("IAmA") 
    ' subReddits.Push("treecomics")
    ' subReddits.Push("news")
    ' subReddits.Push("science")
@@ -67,7 +67,7 @@ END FUNCTION
 
 Function parseJsonPosts(json)
 	tmpList = CreateObject("roArray", 28, true)
-	subReddit = "notdeclared"
+	subReddit = invalid
 	modhash = json.data.modhash
 	if(modhash <> invalid)
 		'print "updating new modhash="+ modhash
@@ -78,7 +78,7 @@ Function parseJsonPosts(json)
 	
 	count = 0
 	for each post in json.data.children		
-				 IF(subReddit = "notdeclared")
+				 IF(subReddit = invalid)
 					subReddit = post.data.subreddit			
 				 END IF
 				 

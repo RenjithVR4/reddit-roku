@@ -7,7 +7,7 @@ s.AddButton(4, "View Comments")
 s.AddButton(5, "Save Post") 
 s.AddButton(9, "View Full") 
 return s
-end function
+end function 
 
 function showSlideShow(originalList,startId, port)
 	subReddit = originalList[0].subReddit
@@ -236,60 +236,3 @@ FUNCTION findStartIndex(list, id)
 	return 0
 END FUNCTION
 
-
-function showHelp()
-	canvasItems = invalid
-	if(IsHD()=false)
-		canvasItems = [
-			{ 
-				url:"pkg:/images/info.jpg"
-				TargetRect:{x:100,y:10}
-			},
-			{ 
-				Text:"Loading subreddit"
-				TextAttrs:{Color:"#00000000", Font:"Medium",
-				HAlign:"HCenter", VAlign:"VCenter",
-				Direction:"LeftToRight"}
-				TargetRect:{x:550,y:255,w:100,h:25}
-			}
-		] 
-	ELSE
-		    canvasItems = [
-        { 
-            url:"pkg:/images/info.jpg"
-            TargetRect:{x:100,y:125}
-        },
-        { 
-            Text:"Loading subreddit"
-            TextAttrs:{Color:"#00000000", Font:"Medium",
-            HAlign:"HCenter", VAlign:"VCenter",
-            Direction:"LeftToRight"}
-            TargetRect:{x:550,y:255,w:100,h:25}
-        }
-    ] 
-	END IF
- 
-   canvas = CreateObject("roImageCanvas")
-   port = CreateObject("roMessagePort")
-   canvas.SetMessagePort(port)
-   'Set opaque background
-  ' canvas.SetLayer(0, {Color:"#FF000000", CompositionMode:"Source"}) 
-   canvas.SetLayer(0, {Color:"#FFffffff", CompositionMode:"Source"}) 
-   canvas.SetRequireAllImagesToDraw(true)
-   canvas.SetLayer(1, canvasItems)
-   canvas.Show() 
-	sleep(1000)
-   
-   while(true)
-       msg = wait(0,port) 
-       if type(msg) = "roImageCanvasEvent" then
-           if (msg.isRemoteKeyPressed()) then
-				canvas.Close()
-           else if (msg.isScreenClosed()) then
-               print "Closed"
-               return -1
-           end if
-       end if
-   end while
-
-END FUNCTION

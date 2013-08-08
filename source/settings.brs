@@ -6,7 +6,7 @@ Function getSetting(name as String) As Dynamic
      return invalid
 End Function
 
-
+ 
 Function setSetting(name As String, value) As Void
     sec = CreateObject("roRegistrySection", "Authentication")
     sec.Write(name, value)
@@ -255,4 +255,62 @@ function changeDisplayGrid(port)
              endif
          endif
      end while
+END FUNCTION
+
+
+function showHelp()
+	canvasItems = invalid
+	if(IsHD()=false)
+		canvasItems = [
+			{ 
+				url:"pkg:/images/info.jpg"
+				TargetRect:{x:100,y:10}
+			},
+			{ 
+				Text:"Loading subreddit"
+				TextAttrs:{Color:"#00000000", Font:"Medium",
+				HAlign:"HCenter", VAlign:"VCenter",
+				Direction:"LeftToRight"}
+				TargetRect:{x:550,y:255,w:100,h:25}
+			}
+		] 
+	ELSE
+		    canvasItems = [
+        { 
+            url:"pkg:/images/info.jpg"
+            TargetRect:{x:100,y:125}
+        },
+        { 
+            Text:"Loading subreddit"
+            TextAttrs:{Color:"#00000000", Font:"Medium",
+            HAlign:"HCenter", VAlign:"VCenter",
+            Direction:"LeftToRight"}
+            TargetRect:{x:550,y:255,w:100,h:25}
+        }
+    ] 
+	END IF
+ 
+   canvas = CreateObject("roImageCanvas")
+   port = CreateObject("roMessagePort")
+   canvas.SetMessagePort(port)
+   'Set opaque background
+  ' canvas.SetLayer(0, {Color:"#FF000000", CompositionMode:"Source"}) 
+   canvas.SetLayer(0, {Color:"#FFffffff", CompositionMode:"Source"}) 
+   canvas.SetRequireAllImagesToDraw(true)
+   canvas.SetLayer(1, canvasItems)
+   canvas.Show() 
+	sleep(1000)
+   
+   while(true)
+       msg = wait(0,port) 
+       if type(msg) = "roImageCanvasEvent" then
+           if (msg.isRemoteKeyPressed()) then
+				canvas.Close()
+           else if (msg.isScreenClosed()) then
+               print "Closed"
+               return -1
+           end if
+       end if
+   end while
+
 END FUNCTION
