@@ -12,7 +12,7 @@ sub loadMainGrid()
 	subRedditNamesAfterAsync = CreateObject("roArray", subReddits.Count(), true)
 	
 
-	dialog = showLoadingScreen("Loading subreddits: 0/" +countSubreddits.tostr(),port)
+	dialog = showLoadingScreen("Downloading subreddits: 0/" +countSubreddits.tostr(),port)
 	
 	list = CreateObject("roArray", subReddits.Count(), true)
 	
@@ -60,7 +60,7 @@ sub loadMainGrid()
 						list[countListAsync] = buildErrorGrid()
 					END IF
 					
-					dialog.SetTitle( "Loading subreddits: "+countListAsync.tostr()+ "/" + countSubreddits.tostr() )
+					dialog.SetTitle( "Downloading subreddits: "+countListAsync.tostr()+ "/" + countSubreddits.tostr() )
 					dialog.Show()
 					
 					'print "[" + msg.GetString() + "]"
@@ -73,6 +73,9 @@ sub loadMainGrid()
 		END IF 
 	end while
 	
+	dialog.SetTitle( "Loading subreddits" )
+	dialog.Show()
+	
 	grid = CreateObject("roGridScreen")
 	grid.SetMessagePort(port)
     grid.SetDisplayMode("scale-to-fit")
@@ -82,6 +85,7 @@ sub loadMainGrid()
 	for i = 0 to subReddits.Count() -1
 		grid.SetContentList(i, list[i])
 	end for
+	 grid.SetFocusedListItem(2,0)
     grid.Show() 
 	dialog.Close()
 	
