@@ -116,7 +116,7 @@ Function parseJsonPosts(json)
 					 o.ShortDescriptionLine1 = "Upvotes: " + ups + " - Downvotes: " + downs
 					 o.ShortDescriptionLine2 = post.data.url
 					 o.Description = "Upvotes: " + ups + " - Downvotes: " + downs + "     " + post.data.url
-					 o.Rating = "NSFW"
+					 'o.Rating = "NSFW"
 					 o.subReddit = post.data.subreddit
 					 o.ups = ups
 					 o.downs = downs
