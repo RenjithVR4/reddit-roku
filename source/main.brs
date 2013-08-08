@@ -80,6 +80,13 @@ sub loadMainGrid()
 				 'for images show a slideshow
 				 if(list[row][col].self = false )
 					list[row] = showSlideShow(list[row],list[row][col].id,port)
+					'dialog = showLoadingScreen("Loading" ,port)
+					'populate any new reddit posts we got during the slideshow
+				    grid.SetContentList(row, list[row]) 
+				    'send the user back to the original location in the grid
+				    grid.SetListOffset(row,col)
+					'dialog.close()
+					
 				 ELSE IF(list[row][col].name = "loadmore" )
 					'load more posts for this subreddit
 					dialog = showLoadingScreen( "loading MOAR",port)
@@ -95,10 +102,7 @@ sub loadMainGrid()
 					showComments(list[row][col])
 				 END IF
 				 
-				 'populate any new reddit posts we got during the slideshow
-				 grid.SetContentList(row, list[row]) 
-				 'send the user back to the original location in the grid
-				 grid.SetListOffset(row,col)
+
 				 END IF
 				 
              endif

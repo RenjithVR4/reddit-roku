@@ -1,6 +1,6 @@
 
 function addButtons(s)
-s.AddButton(1, "Resume") 
+s.AddButton(1, "Hide") 
 s.AddButton(2, "Upvote") 
 s.AddButton(3, "Downvote") 
 s.AddButton(4, "View Comments") 
@@ -11,8 +11,14 @@ end function
 
 function showSlideShow(originalList,startId, port)
 	subReddit = originalList[0].subReddit
+	
+	if(getSetting("helpShown") = invalid)
+		showHelp()
+		setSetting("helpShown","1")
+	END IF
+	
 	dialog = showLoadingScreen( "loading SubReddit:  r/" + subReddit , port)
- 
+
 	timer = getTimerSetting()
 	timer = timer.ToInt()
 	timerMilaseconds = timer * 1000
@@ -40,8 +46,10 @@ function showSlideShow(originalList,startId, port)
 	s.SetNext(startIndex, true)
 	s.Show()
 	dialog.Close()
+	
+	
+	buttonsShownOnce = false
 	msg = "declaring"
-	loading = false
 	row = invalid
 	addThesePosts = CreateObject("roArray", 28, true)
 	attemptMoreCount = 0
@@ -61,16 +69,21 @@ function showSlideShow(originalList,startId, port)
 			  END IF
 			  
 			  'if the user ever hits the play button we will resume
-			  if(msg.getIndex()=13)
-					s.ClearButtons()
-					s.Resume()
-					paused = false
-			  END IF			  
+			 ' if(msg.getIndex()=13)
+			'		s.ClearButtons()
+			'		s.Resume()
+			'		paused = false
+			'  END IF			  
 			  
 		  END IF
 		
 
 		    if msg.isRequestSucceeded() then
+			
+				'if(buttonsShownOnce = false)
+				'	s= addButtons(s)
+				'	buttonsShownOnce=true
+				'END IF
 		 		if((after <> invalid) AND (paused = false) AND (attemptMoreCount < 55) )
 						print "attempting to load more posts attempt = " + attemptMoreCount.tostr()
 						attemptMoreCount = attemptMoreCount +1
@@ -224,3 +237,49 @@ FUNCTION findStartIndex(list, id)
 END FUNCTION
 
 
+function showHelp()
+	canvasItems = invalid
+	if(IsHD()=false)
+		canvasItems = [
+			{ 
+				url:"pkg:/images/info.jpg"
+				TargetRect:{x:100,y:10}
+			},
+			{ 
+				Text:"Loading subreddit"
+				TextAttrs:{Color:"#00000000", Font:"Medium",
+				HAlign:"HCenter", VAlign:"VCenter",
+				Direction:"LeftToRight"}
+				TargetRect:{x:550,y:255,w:100,h:25}
+			}
+		] 
+	ELSE
+		    canvasItems = [
+        { 
+            url:"pkg:/images/info.jpg"
+            TargetRect:{x:100,y:125}
+        },
+        { 
+            Text:"Loading subreddit"
+            TextAttrs:{Color:"#00000000", Font:"Medium",
+            HAlign:"HCenter", VAlign:"VCenter",
+            Direction:"LeftToRight"}
+            TargetRect:{x:550,y:255,w:100,h:25}
+        }
+    ] 
+	END IF
+ 
+   canvas = CreateObject("roImageCanvas")
+   port = CreateObject("roMessagePort")
+   canvas.SetMessagePort(port)
+   'Set opaque background
+  ' canvas.SetLayer(0, {Color:"#FF000000", CompositionMode:"Source"}) 
+   canvas.SetLayer(0, {Color:"#FFffffff", CompositionMode:"Source"}) 
+   canvas.SetRequireAllImagesToDraw(true)
+   canvas.SetLayer(1, canvasItems)
+   canvas.Show() 
+   sleep(17000)
+   canvas.Close()
+
+
+END FUNCTION
