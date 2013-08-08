@@ -194,7 +194,7 @@ Function CreateDefaultTheme() as Object
 	
 	black = "#000000"
 	white = "#ffffff"
-	hdLogo = "pkg:/images/reddit-logo-hd.png"
+	hdLogo = "pkg:/images/reddit-logo-hd.jpg"
 	sdLogo = "pkg:/images/reddit-logo-sd.png"
 	
 	theme.BackgroundColor = white
@@ -229,8 +229,8 @@ Function CreateDefaultTheme() as Object
 	
 	theme.GridScreenLogoHD          = hdLogo
 	theme.OverhangPrimaryLogoHD     = sdLogo
-    theme.GridScreenLogoOffsetHD_X  = "220"
-    theme.GridScreenLogoOffsetHD_Y  = "25"
+    theme.GridScreenLogoOffsetHD_X  = "0"
+    theme.GridScreenLogoOffsetHD_Y  = "20"
     theme.GridScreenOverhangHeightHD = "145"
 	
 	theme.OverhangPrimaryLogoOffsetHD_X = "220"
