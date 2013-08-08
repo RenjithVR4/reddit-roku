@@ -9,24 +9,17 @@ sub loadMainGrid()
 	port=CreateObject("roMessagePort")
 	subReddits = getSubreddits()
 	countSubreddits = subReddits.Count()
+	subRedditNamesAfterAsync = CreateObject("roArray", subReddits.Count(), true)
 	
-	
-	grid = CreateObject("roGridScreen")
-	grid.SetMessagePort(port)
 
-    grid.SetupLists(countSubreddits)
-    grid.SetListNames(subReddits)  'we are now setting these asyncornously
-    grid.SetDisplayMode("scale-to-fit")
-    grid.SetGridStyle("flat-16x9")
-    grid.Show() 
-	'dialog = showLoadingScreen("Loading subreddits: 0/" +countSubreddits.tostr(),port)
+	dialog = showLoadingScreen("Loading subreddits: 0/" +countSubreddits.tostr(),port)
 	
-	list = CreateObject("roArray", 100, true)
+	list = CreateObject("roArray", subReddits.Count(), true)
 	
 	settings = getSettingsGridForHome()
-	'grid.SetListName(0,"Settings")
-	grid.SetContentList(0, settings)
-	
+	subRedditNamesAfterAsync[0] = "Settings"
+	list[0] = settings
+
 	request = CreateObject("roArray", 100, true)
 	'httpPort=CreateObject("roMessagePort")
 	for j = 1 to subReddits.Count() -1
@@ -59,8 +52,7 @@ sub loadMainGrid()
 					subRedditName = newList[0].subReddit
 					if(subRedditName <> invalid)
 						print "got the subreddit= " + subRedditName
-						grid.SetListName(countListAsync,subRedditName)
-						'grid.SetListName(countListAsync,"test")
+						subRedditNamesAfterAsync.push(subRedditName)
 					end if
 					list[countListAsync] = newList								
 					if(list[countListAsync] = invalid)
@@ -68,11 +60,8 @@ sub loadMainGrid()
 						list[countListAsync] = buildErrorGrid()
 					END IF
 					
-					grid.SetContentList(countListAsync, list[countListAsync])
-					grid.show()
-				'	dialog.SetTitle( "Loading subreddits: "+countListAsync.tostr()+ "/" + countSubreddits.tostr() )
-				'	dialog.Show()
-					'print "adding another grid = " +countListAsync.tostr()
+					dialog.SetTitle( "Loading subreddits: "+countListAsync.tostr()+ "/" + countSubreddits.tostr() )
+					dialog.Show()
 					
 					'print "[" + msg.GetString() + "]"
 				END IF
@@ -84,13 +73,19 @@ sub loadMainGrid()
 		END IF 
 	end while
 	
+	grid = CreateObject("roGridScreen")
+	grid.SetMessagePort(port)
+    grid.SetDisplayMode("scale-to-fit")
+    grid.SetGridStyle("Flat-Square")
+	grid.SetupLists(countSubreddits)
+    grid.SetListNames(subRedditNamesAfterAsync)  'we are now setting these asyncornously
+	for i = 0 to subReddits.Count() -1
+		grid.SetContentList(i, list[i])
+	end for
+    grid.Show() 
+	dialog.Close()
 	
-
-	'grid.SetFocusedListItem(2,0)
-	grid.show()
-	'dialog.Close()
-	
-	sleep(20000)
+	'sleep(20000)
 	
     while true	
          msg = wait(0, port)
