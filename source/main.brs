@@ -12,7 +12,7 @@ sub loadMainGrid()
 	subRedditNamesAfterAsync = CreateObject("roArray", subReddits.Count(), true)
 	
 
-	dialog = showLoadingScreen("Downloading subreddits: 0/" +countSubreddits.tostr(),port)
+	dialog = showLoadingScreen("Downloading subreddits: 0/" +(countSubreddits-1).tostr(),port)
 	
 	list = CreateObject("roArray", subReddits.Count(), true)
 	
@@ -40,10 +40,16 @@ sub loadMainGrid()
 	
 	countListAsync = 1 'counting the list but for when the async returns
 	
+	timer = CreateObject("roTimespan")
+	
 	while true
-
-         msg = wait(0, port)
-		 
+        msg = wait(0, port)	 
+		
+		TotalSeconds = timer.TotalSeconds()
+		if(TotalSeconds > 90)               'prevent infinite while loop while 
+			exit while
+		end if
+		
 		if (type(msg) = "roUrlEvent")
 			code = msg.GetResponseCode()
 			if (code = 200)
@@ -65,13 +71,15 @@ sub loadMainGrid()
 						list[countListAsync] = buildErrorGrid()
 					END IF
 					
-					dialog.SetTitle( "Downloading subreddits: "+countListAsync.tostr()+ "/" + countSubreddits.tostr() )
+					dialog.SetTitle( "Downloading subreddits: "+countListAsync.tostr()+ "/" + (countSubreddits-1).tostr() )
 					dialog.Show()
 					
 					'print "[" + msg.GetString() + "]"
 				END IF
+				
 				countListAsync = countListAsync+1
-				if(countListAsync = countSubreddits)
+
+				if(countListAsync = countSubreddits )
 					exit while
 				end if
 			END IF
@@ -94,7 +102,6 @@ sub loadMainGrid()
     grid.Show() 
 	dialog.Close()
 	
-	'sleep(20000)
 	
     while true	
          msg = wait(0, port)
