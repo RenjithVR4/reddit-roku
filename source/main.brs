@@ -20,11 +20,16 @@ sub loadMainGrid()
 	subRedditNamesAfterAsync[0] = "Settings"
 	list[0] = settings
 
+	cookie = getSetting("cookie") 
+
 	request = CreateObject("roArray", 100, true)
 	'httpPort=CreateObject("roMessagePort")
 	for j = 1 to subReddits.Count() -1
 		request[j] = CreateObject("roUrlTransfer")
 		request[j].SetMessagePort(port)
+		if(cookie <> invalid)
+			request[j].AddHeader("Cookie", "reddit_session="+cookie)
+		END IF
 		subReddit = subReddits[j]
 		api_url = "http://www.reddit.com/r/" + subReddit + ".json"
 		request[j].SetUrl(api_url)
@@ -36,7 +41,7 @@ sub loadMainGrid()
 	countListAsync = 1 'counting the list but for when the async returns
 	
 	while true
-	print "in awhile"
+
          msg = wait(0, port)
 		 
 		if (type(msg) = "roUrlEvent")
@@ -54,7 +59,7 @@ sub loadMainGrid()
 						print "got the subreddit= " + subRedditName
 						subRedditNamesAfterAsync.push(subRedditName)
 					end if
-					list[countListAsync] = newList								
+					list[countListAsync] = newList
 					if(list[countListAsync] = invalid)
 						'build a failed to load icon for the grid
 						list[countListAsync] = buildErrorGrid()
