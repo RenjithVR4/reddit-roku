@@ -11,7 +11,9 @@ sub loadMainGrid()
 	countSubreddits = subReddits.Count()
 	subRedditNamesAfterAsync = CreateObject("roArray", subReddits.Count(), true)
 	
-
+	grid = CreateObject("roGridScreen")
+	grid.SetMessagePort(port)
+	grid.Show()
 	dialog = showLoadingScreen("Downloading subreddits: 0/" +(countSubreddits-1).tostr(),port)
 	
 	list = CreateObject("roArray", subReddits.Count(), true)
@@ -26,7 +28,7 @@ sub loadMainGrid()
 	'httpPort=CreateObject("roMessagePort")
 	for j = 1 to subReddits.Count() -1
 		request[j] = CreateObject("roUrlTransfer")
-		request[j].SetMessagePort(port)
+		request[j].SetPort(port)
 		if(cookie <> invalid)
 			request[j].AddHeader("Cookie", "reddit_session="+cookie)
 		END IF
@@ -86,20 +88,23 @@ sub loadMainGrid()
 		END IF 
 	end while
 	
-	dialog.SetTitle( "Loading subreddits" )
-	dialog.Show()
 	
-	grid = CreateObject("roGridScreen")
-	grid.SetPort(port)
-    grid.SetDisplayMode("scale-to-fit")
+
+	grid.SetDisplayMode("scale-to-fit")
     grid.SetGridStyle("Flat-Square")
 	grid.SetupLists(countSubreddits)
     grid.SetListNames(subRedditNamesAfterAsync)  'we are now setting these asyncornously
+	
+	dialog.SetTitle( "Loading subreddits" )
+	dialog.Show()
+	
+
+ 
 	for i = 0 to subReddits.Count() -1
 		grid.SetContentList(i, list[i])
 	end for
 	 grid.SetFocusedListItem(2,0)
-    grid.Show() 
+   
 	dialog.Close()
 	
 	
@@ -135,21 +140,27 @@ sub loadMainGrid()
 				 'for images show a slideshow
 				 if(list[row][col].self = false )
 					list[row] = showSlideShow(list[row],list[row][col].id,port)
-					'dialog = showLoadingScreen("Loading" ,port)
+					dialog = showLoadingScreen("Loading" ,port)
 					'populate any new reddit posts we got during the slideshow
 				    grid.SetContentList(row, list[row]) 
 				    'send the user back to the original location in the grid
 				    grid.SetListOffset(row,col)
-					'dialog.close()
+					dialog.close()
 					
 				 ELSE IF(list[row][col].name = "loadmore" )
+				 
 					'load more posts for this subreddit
 					dialog = showLoadingScreen( "loading MOAR",port)
 					subReddit = list[row][col].subReddit
 					after = getTheAfter(list[row])	
 					list[row] = removeOldLoadMore(list[row])
 					newPosts = loadMorePosts(subReddit,after)
-					list[row].Append(newPosts) 
+					if(newPosts = invalid)
+						showMessage("Unable to load more posts, try again")
+					ELSE
+						list[row] = removeOldLoadMore(list[row])
+						list[row].Append(newPosts) 
+					END IF
 					dialog.Close()
 				 
 				 ELSE					
@@ -242,7 +253,7 @@ Function CreateDefaultTheme() as Object
 	theme.GridScreenLogoHD          = hdLogo
 	theme.OverhangPrimaryLogoHD     = sdLogo
     theme.GridScreenLogoOffsetHD_X  = "0"
-    theme.GridScreenLogoOffsetHD_Y  = "20"
+    theme.GridScreenLogoOffsetHD_Y  = "0"
     theme.GridScreenOverhangHeightHD = "145"
 	
 	theme.OverhangPrimaryLogoOffsetHD_X = "220"
@@ -253,7 +264,7 @@ Function CreateDefaultTheme() as Object
     theme.GridScreenLogoSD          = sdLogo
 	theme.OverhangPrimaryLogoSD     = sdLogo
     theme.GridScreenLogoOffsetSD_X  = "0"
-    theme.GridScreenLogoOffsetSD_Y  = "10"
+    theme.GridScreenLogoOffsetSD_Y  = "0"
 	theme.GridScreenOverhangHeightSD = "100"
     
     ' to use your own focus ring artwork 

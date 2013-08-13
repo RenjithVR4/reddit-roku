@@ -66,24 +66,11 @@ function showSlideShow(originalList,startId, port)
 			     print "adding btns"
 				 paused = true
                  s= addButtons(s)
-			  END IF
-			  
-			  'if the user ever hits the play button we will resume
-			 ' if(msg.getIndex()=13)
-			'		s.ClearButtons()
-			'		s.Resume()
-			'		paused = false
-			'  END IF			  
-			  
+			  END IF	  		  
 		  END IF
 		
 
 		    if msg.isRequestSucceeded() then
-			
-				'if(buttonsShownOnce = false)
-				'	s= addButtons(s)
-				'	buttonsShownOnce=true
-				'END IF
 		 		if((after <> invalid) AND (paused = false) AND (attemptMoreCount < 55) )
 						print "attempting to load more posts attempt = " + attemptMoreCount.tostr()
 						attemptMoreCount = attemptMoreCount +1
@@ -114,13 +101,18 @@ function showSlideShow(originalList,startId, port)
 
              if msg.isScreenClosed() then
 				'return the list that also contains the self posts
+				 originalList = removeOldLoadMore(originalList)
 				 originalList.Append(list)
+				 
 				 'add a load more to this
-				 if(attemptMoreCount < 35) ' we dont want to have a load more if theres already a ton of posts
+				 if(attemptMoreCount < 40) ' we dont want to have a load more if theres already a ton of posts
 					after = getTheAfter(list)
+					
 					if(after <> invalid)
 						more = generateLoadMorePost(after,subreddit, 99) 'the count variable just needs to be > 0
-						originalList.Append(more)
+						print "returning back to the grid after= " +after
+						print "more.after = " + more.after
+						originalList.Push(more)
 					END IF
 				 END IF
                  return originalList 'when the user closes the screen return any new reddit posts we downloaded
