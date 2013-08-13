@@ -90,7 +90,7 @@ sub loadMainGrid()
 	dialog.Show()
 	
 	grid = CreateObject("roGridScreen")
-	grid.SetMessagePort(port)
+	grid.SetPort(port)
     grid.SetDisplayMode("scale-to-fit")
     grid.SetGridStyle("Flat-Square")
 	grid.SetupLists(countSubreddits)
