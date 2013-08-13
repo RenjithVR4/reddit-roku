@@ -54,6 +54,7 @@ sub loadMainGrid()
 		
 		if (type(msg) = "roUrlEvent")
 			code = msg.GetResponseCode()
+			print code
 			if (code = 200)
 				newList = invalid
 				response = msg.GetString()
@@ -160,6 +161,9 @@ sub loadMainGrid()
 					ELSE
 						list[row] = removeOldLoadMore(list[row])
 						list[row].Append(newPosts) 
+						grid.SetContentList(row, list[row]) 
+						'send the user back to the original location in the grid
+						grid.SetListOffset(row,col)
 					END IF
 					dialog.Close()
 				 
