@@ -7,14 +7,21 @@ End Function
 
 sub loadMainGrid()
 	port=CreateObject("roMessagePort")
+	dialogPort=CreateObject("roMessagePort")
 	subReddits = getSubreddits()
 	countSubreddits = subReddits.Count()
 	subRedditNamesAfterAsync = CreateObject("roArray", subReddits.Count(), true)
 	
 	grid = CreateObject("roGridScreen")
 	grid.SetMessagePort(port)
-	grid.Show()
-	dialog = showLoadingScreen("Downloading subreddits: 0/" +(countSubreddits-1).tostr(),port)
+	grid.SetDisplayMode("scale-to-fit")
+    grid.SetGridStyle("Flat-Square")
+	grid.SetupLists(countSubreddits)
+
+
+	grid.show()
+	
+	dialog = showLoadingScreen("Downloading subreddits: 0/" +(countSubreddits-1).tostr(),dialogPort)
 	
 	list = CreateObject("roArray", subReddits.Count(), true)
 	
@@ -89,11 +96,8 @@ sub loadMainGrid()
 		END IF 
 	end while
 	
-	
 
-	grid.SetDisplayMode("scale-to-fit")
-    grid.SetGridStyle("Flat-Square")
-	grid.SetupLists(countSubreddits)
+	
     grid.SetListNames(subRedditNamesAfterAsync)  'we are now setting these asyncornously
 	
 	dialog.SetTitle( "Loading subreddits" )
@@ -105,7 +109,7 @@ sub loadMainGrid()
 		grid.SetContentList(i, list[i])
 	end for
 	 grid.SetFocusedListItem(2,0)
-   
+	'grid.show()
 	dialog.Close()
 	
 	
@@ -272,16 +276,16 @@ Function CreateDefaultTheme() as Object
 	theme.GridScreenOverhangHeightSD = "100"
     
     ' to use your own focus ring artwork 
-    'theme.GridScreenFocusBorderSD        = "pkg:/images/GridCenter_Border_Movies_SD43.png"
-    'theme.GridScreenBorderOffsetSD  = "(-26,-25)"
-    'theme.GridScreenFocusBorderHD        = "pkg:/images/GridCenter_Border_Movies_HD.png"
-    'theme.GridScreenBorderOffsetHD  = "(-28,-20)"
+   ' theme.GridScreenFocusBorderSD        = "pkg:/images/GridCenter_Border_Movies_SD43.png"
+   ' theme.GridScreenBorderOffsetSD  = "(-26,-25)"
+   ' theme.GridScreenFocusBorderHD        = "pkg:/images/GridCenter_Border_Movies_HD.png"
+  '  theme.GridScreenBorderOffsetHD  = "(-28,-20)"
     
     ' to use your own description background artwork
     'theme.GridScreenDescriptionImageSD  = "pkg:/images/Grid_Description_Background_SD43.png"
-    'theme.GridScreenDescriptionOffsetSD = "(125,170)"
-    'theme.GridScreenDescriptionImageHD  = "pkg:/images/Grid_Description_Background_HD.png"
-    'theme.GridScreenDescriptionOffsetHD = "(190,255)"
+    'theme.GridScreenDescriptionOffsetSD = "(25,25)"
+   ' theme.GridScreenDescriptionImageHD  = "pkg:/images/Grid_Description_Background_HD.png"
+	'theme.GridScreenDescriptionOffsetHD = "(25,25)"
     
 
     return theme
