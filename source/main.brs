@@ -30,7 +30,7 @@ sub loadMainGrid()
 		request[j] = CreateObject("roUrlTransfer")
 		request[j].SetPort(port)
 		if(cookie <> invalid)
-			request[j].AddHeader("Cookie", "reddit_session="+cookie)
+			'request[j].AddHeader("Cookie", "reddit_session="+cookie) ' not sure if adding cookies is a good thing, its making my "logged in" version of the app pull in 100 json posts for each subreddit causing it to take a long time to load
 		END IF
 		subReddit = subReddits[j]
 		api_url = "http://www.reddit.com/r/" + subReddit + ".json"
@@ -158,10 +158,10 @@ sub loadMainGrid()
 					newPosts = loadMorePosts(subReddit,after)
 					if(newPosts = invalid)
 						showMessage("Unable to load more posts, try again")
-					ELSE
+					ELSE 
 						list[row] = removeOldLoadMore(list[row])
-						list[row].Append(newPosts) 
-						grid.SetContentList(row, list[row]) 
+						list[row].Append(newPosts)
+						grid.SetContentList(row, list[row])
 						'send the user back to the original location in the grid
 						grid.SetListOffset(row,col)
 					END IF
