@@ -52,7 +52,7 @@ sub loadMainGrid()
 	timer = CreateObject("roTimespan")
 	
 	while true
-        msg = wait(0, port)	 
+        msg = wait(0, port)
 		
 		TotalSeconds = timer.TotalSeconds()
 		if(TotalSeconds > 90)               'prevent infinite while loop while 
@@ -92,6 +92,9 @@ sub loadMainGrid()
 				if(countListAsync = countSubreddits )
 					exit while
 				end if
+			else
+				'code was not 200
+				print "HTTP response was not 200"
 			END IF
 		END IF 
 	end while
@@ -163,6 +166,10 @@ sub loadMainGrid()
 					if(newPosts = invalid)
 						showMessage("Unable to load more posts, try again")
 					ELSE 
+
+						if(newPosts.count() < 2)
+							showMessage("Could not find new posts, please try again")
+						END IF
 						list[row] = removeOldLoadMore(list[row])
 						list[row].Append(newPosts)
 						grid.SetContentList(row, list[row])
