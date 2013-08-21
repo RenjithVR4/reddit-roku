@@ -1,6 +1,7 @@
 function getDefaultSubreddits()
     subReddits = CreateObject("roArray", 30, true)
 	subReddits.Push("Settings")
+	'subReddits.Push("videos")
     subReddits.Push("funny")
 	subReddits.Push("pics")
     subReddits.Push("adviceanimals")
@@ -85,14 +86,14 @@ Function parseJsonPosts(json)
 				 url = fixImgur(post.data.url)
 				 self = post.data.is_self
 				 
-				 if((isGood(url) = false) AND (self = false))
+				 if((isGood(url) = false) AND (self = false) AND (isVideo(post.data.domain) = false))
 					 'print "Its not an img!"			   
 				 else
 					 ups = post.data.ups.tostr()
 					 downs = post.data.downs.tostr()
+					 urlType = ""
 					 o = CreateObject("roAssociativeArray")
-					 o.ContentType = "episode"
-					 o.Title = post.data.title
+					' o.ContentType = "episode"
 					 o.TextOverlayBody = post.data.title
 					 
 					 if(self=true)
@@ -101,22 +102,38 @@ Function parseJsonPosts(json)
 						 o.HDPosterUrl = "pkg:/images/self.png" 
 						 o.self = true
 						 o.selftext = post.data.selftext
-					 else if(post.data.thumbnail = "")
+						 urlType = "[SELF]"
+					 else if(post.data.thumbnail = "" OR post.data.thumbnail = "default")
+						 o.SDPosterUrl = "pkg:/images/notfound.jpg" 
+						 o.HDPosterUrl = "pkg:/images/notfound.jpg" 					 
+					 else if(post.data.thumbnail = "nsfw")
 						 o.SDPosterUrl = "pkg:/images/nsfw.png" 
-						 o.HDPosterUrl = "pkg:/images/nsfw.png" 					 
+						 o.HDPosterUrl = "pkg:/images/nsfw.png" 
+						 urlType = "[PIC]"						 
 					 else
 						 o.Url = url
 						 o.SDPosterUrl = post.data.thumbnail
 						 o.HDPosterUrl = post.data.thumbnail
 						 o.self=false
+						 urlType = "[PIC]"
 					 END IF
 					 
 					 
-
+					 if(isVideo(post.data.domain) = true)
+						o.video = true
+						urlType = "[VID]"
+						
+					 else
+						o.video = false
+					 END IF
+					 
+					 'o.Title = urlType + " " + post.data.title
+					 o.Title = post.data.title
+					
 					 o.ShortDescriptionLine1 = "Upvotes: " + ups + " - Downvotes: " + downs
 					 o.ShortDescriptionLine2 = post.data.url
 					 o.Description = "Upvotes: " + ups + " - Downvotes: " + downs + "     " + post.data.url
-					 'o.Rating = "NSFW"
+					 
 					 o.subReddit = post.data.subreddit
 					 o.ups = ups
 					 o.downs = downs
@@ -161,8 +178,8 @@ FUNCTION generateLoadMorePost(after,subreddit,count)
 			more.Title = "Couldn't find any pictures or self posts, click here to try again"
 		END IF
 		more.name = "loadmore"
-		more.HDPosterUrl =  "pkg:/images/refresh.png"
-		more.SDPosterUrl =  "pkg:/images/refresh.png"
+		more.HDPosterUrl =  "pkg:/images/reddit-icon.jpg"
+		more.SDPosterUrl =  "pkg:/images/reddit-icon.jpg"
 		more.self=true 'the slideshow will update when it comes to this post
 		more.Url = "pkg:/images/loading.png" 'shows the loading screen
 		'get the subreddit from the json
@@ -302,12 +319,21 @@ END FUNCTION
 
 
 Function isGood(url as string) as Boolean
-	if(isImg(url) = false OR isGallery(url) = false OR isGif(url) = false)
+	if(isImg(url) = false OR isGallery(url) = false OR isGif(url) = false )
 		return false
 	else
 		return true
 	endif
 End Function
+
+FUNCTION isVideo(domain as string)
+	if(domain = "youtube.com" OR domain="youtu.be")
+		return true
+	else
+		return false
+	END IF
+
+END FUNCTION
 
 Function isGif(url as string) as Boolean
 	if(right(url, 3) <> "gif")
@@ -371,3 +397,6 @@ FUNCTION removeOldLoadMore(list) as Object
 	
 	return tmpList
 END FUNCTION
+
+
+

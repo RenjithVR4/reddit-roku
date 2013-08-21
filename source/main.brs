@@ -144,7 +144,12 @@ sub loadMainGrid()
 					END IF 
 				ELSE if(row=0 AND col=0) THEN 'show settings grid
 					settingsGrid(port)
+				 ELSE if(list[row][col].video=true)
+					'show a video
+					showVideo(list[row],list[row][col].id,port)
+				 
 				 ELSE
+				 
 				 'for images show a slideshow
 				 if(list[row][col].self = false )
 					list[row] = showSlideShow(list[row],list[row][col].id,port)

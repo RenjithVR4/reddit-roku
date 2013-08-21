@@ -51,6 +51,8 @@ Function CreateURLTransferObject2(url As String, contentHeader As String) as Obj
     obj.SetPort(CreateObject("roMessagePort"))
     obj.SetUrl(url)
         obj.AddHeader("Content-Type", contentHeader)
+		obj.AddHeader("GData-Version", "2")
+		obj.AddHeader("X-GData-Key", "key=AI39si7c1TQJixS7YeAlHOtlTbkVG3wxfVpTabNIfBNWjIID2fBcwb-D4bR59S6w8GgPGSGW8hKcog9Lu1Z18yLDFQtcBE3DhA")
 		obj.AddHeader("User-Agent", "roku/1.0")
 		cookie = getSetting("cookie") 
 		if(cookie <> invalid)

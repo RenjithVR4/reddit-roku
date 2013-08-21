@@ -26,7 +26,7 @@ function showSlideShow(originalList,startId, port)
 	showTitle = getShowTitleSetting()
  
 	after = getTheAfter(originalList)	
-	list= removeSelfPosts(originalList)
+	list= cleanList(originalList)
 	activeListCount = list.count()
     s = CreateObject("roSlideShow")
     s.SetMessagePort(port)
@@ -82,7 +82,7 @@ function showSlideShow(originalList,startId, port)
 						else
 							after = getTheAfter(newList)	
 									
-							newListRemovedSelf = removeSelfPosts(newList)
+							newListRemovedSelf = cleanList(newList)
 							
 							'make sure the new subreddits we found contained at least one image
 							if(newListRemovedSelf.count() > 1)
@@ -201,11 +201,11 @@ function showSlideShow(originalList,startId, port)
 End function
 
 
-FUNCTION removeSelfPosts(list) as Object
+FUNCTION cleanList(list) as Object
 	tmpList = CreateObject("roArray", 122, true)
 
 	for each post in list
-		if (post.self=false) then
+		if (post.self=false AND post.video=false) then
 			tmpList.Push(post)
 		END IF
 	end for
