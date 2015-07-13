@@ -78,13 +78,11 @@ FUNCTION getUserInput(title, dspText, default, secure = false) as String
      screen.SetMessagePort(port)
      screen.SetTitle(title)
      screen.SetText(default)
+     screen.SetSecureText(secure)
      screen.SetDisplayText(dspText)
      screen.SetMaxLength(45)
      screen.AddButton(1, "next")
      'screen.AddButton(2, "back")
-     if secure = true then
-        screen.SetSecureText(secure)
-     endif
      screen.Show() 
   
      while true
