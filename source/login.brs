@@ -4,7 +4,7 @@ Function login()
 	if(username = "-1")
 		return -1    'user hit the back btn
 	END IF
-	password = getUserInput("Login - Password", "Enter your Reddit password", "")
+	password = getUserInput("Login - Password", "Enter your Reddit password", "", true)
 	if(password = "-1")
 		return -1 'user hit the back btn
 	END IF
@@ -72,12 +72,13 @@ FUNCTION getModhash() as String
 END FUNCTION
 
 
-FUNCTION getUserInput(title, dspText, default) as String
+FUNCTION getUserInput(title, dspText, default, secure = false) as String
 	 screen = CreateObject("roKeyboardScreen")
      port = CreateObject("roMessagePort") 
      screen.SetMessagePort(port)
      screen.SetTitle(title)
      screen.SetText(default)
+     screen.SetSecureText(secure)
      screen.SetDisplayText(dspText)
      screen.SetMaxLength(45)
      screen.AddButton(1, "next")
